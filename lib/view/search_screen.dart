@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:raag/components/pop_up_menu.dart';
 import 'package:raag/view/song_play_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -12,6 +12,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late OnAudioQuery audioQuery;
+  bool hasPermission = false;
 
   @override
   void initState() {
@@ -20,12 +21,12 @@ class _SearchScreenState extends State<SearchScreen> {
     fetchSongs();
   }
 
-  Future<List<SongModel>> fetchSongs() async {
-     bool isGranted = await audioQuery.checkAndRequest();
-    if (!isGranted) {
-      await Permission.audio.request();
-    }
-    return await audioQuery.querySongs();
+  Future<void> fetchSongs({bool retry = false}) async {
+    hasPermission = await audioQuery.checkAndRequest(
+      retryRequest: retry,
+    );
+
+    hasPermission ? setState(() {}) : null;
   }
 
   @override
@@ -66,72 +67,117 @@ class _SearchScreenState extends State<SearchScreen> {
                 color: Colors.blue[700],
               ),
             ),
-            FutureBuilder(
-                future: fetchSongs(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError) {
-                    return const Center(
-                      child: Text('Error fetching songs'),
-                    );
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
-                      child: Text('No songs found'),
-                    );
-                  }
-                  List<SongModel> songs = snapshot.data!;
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: songs.length,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PlaySong(
-                                  song: songs[index],
+            hasPermission
+                ? FutureBuilder<List<SongModel>>(
+                    future: audioQuery.querySongs(
+                      sortType: null,
+                      orderType: OrderType.ASC_OR_SMALLER,
+                      uriType: UriType.EXTERNAL,
+                      ignoreCase: true,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                          child: Text('Error fetching songs'),
+                        );
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(
+                          child: Text('No songs found'),
+                        );
+                      }
+                      List<SongModel> songs = snapshot.data!;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: songs.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlaySong(
+                                    song: songs[index],
+                                  ),
                                 ),
-                              ));
-                        },
-                        leading: QueryArtworkWidget(
-                          //  controller: audioQuery,
-                          id: songs[index].id,
-                          type: ArtworkType.AUDIO,
-                          nullArtworkWidget: Container(
-                            width: 50,
-                            height: 50,
-                            margin: const EdgeInsets.all(4.0),
-                            decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
+                              );
+                            },
+                            leading: QueryArtworkWidget(
+                              controller: audioQuery,
+                              id: songs[index].id,
+                              type: ArtworkType.AUDIO,
+                              nullArtworkWidget: Container(
+                                width: 50,
+                                height: 50,
+                                margin: const EdgeInsets.all(4.0),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
                                     fit: BoxFit.cover,
                                     image: AssetImage(
-                                        "asset/images/default_album.jpg"))),
-                          ),
-                        ),
-                        title: Text(
-                          songs[index].title,
-                          style: const TextStyle(color: Colors.blue),
-                        ),
-                        subtitle: Text(
-                          songs[index].album!,
-                          style: const TextStyle(color: Colors.blue),
-                        ),
-                        trailing: const Icon(
-                          Icons.more_vert,
-                          color: Colors.blue,
-                        ),
+                                        "asset/images/default_album.jpg"),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                              songs[index].title,
+                              style: const TextStyle(color: Colors.blue),
+                            ),
+                            subtitle: Text(
+                              songs[index].album!,
+                              style: const TextStyle(color: Colors.blue),
+                            ),
+                            trailing: PopUp(song: songs[index]),
+                          );
+                        },
                       );
-                    },
-                  );
-                })
+                    })
+                : const Center(
+                    child: Text('Error fetching songs'),
+                  ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ListItems extends StatelessWidget {
+  const ListItems({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: ListView(
+        padding: const EdgeInsets.all(8),
+        children: [
+          InkWell(
+            onTap: () {},
+            child: Container(
+              height: 50,
+              color: Colors.amber[100],
+              child: const Center(child: Text('Entry A')),
+            ),
+          ),
+          const Divider(),
+          Container(
+            height: 50,
+            color: Colors.amber[200],
+            child: const Center(child: Text('Entry B')),
+          ),
+          const Divider(),
+          Container(
+            height: 50,
+            color: Colors.amber[300],
+            child: const Center(child: Text('Entry C')),
+          ),
+        ],
       ),
     );
   }

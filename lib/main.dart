@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:raag/model/song_model.dart';
 import 'package:raag/view/main_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  if (!Hive.isAdapterRegistered(SongAdapter().typeId)) {
+    Hive.registerAdapter(SongAdapter());
+  }
+  if (!Hive.isAdapterRegistered(PlaylistAdapter().typeId)) {
+    Hive.registerAdapter(PlaylistAdapter());
+  }
+  await Hive.openBox<int>('favorites');
   runApp(const MyApp());
 }
 
@@ -41,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const  Text('RAAG'),
+        title: const Text('RAAG'),
       ),
       body: Center(
         child: Column(

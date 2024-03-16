@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:raag/view/fav_screen.dart';
 import 'package:raag/view/home_screen.dart';
 import 'package:raag/view/play_list_screen.dart';
