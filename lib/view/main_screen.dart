@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raag/components/bottom_nav_bar.dart';
 import 'package:raag/view/fav_screen.dart';
 import 'package:raag/view/home_screen.dart';
 import 'package:raag/view/play_list_screen.dart';
@@ -52,27 +53,17 @@ class _MainScreenState extends State<MainScreen> {
             )
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: currentIndex,
-            type: BottomNavigationBarType.fixed,
-            onTap: (selectedIndex) {
-              setState(() {
-                currentIndex = selectedIndex;
-              });
-            },
-            selectedItemColor: Colors.blue[100],
-            unselectedItemColor: Colors.white,
-            backgroundColor: Colors.blueGrey,
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.search), label: "Search"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.favorite), label: "Favorite"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.playlist_play_sharp), label: "Playlist"),
-            ]),
+        bottomNavigationBar: BottomNavBar(
+          currentIndex: currentIndex,
+          onTap: onTap,
+        ),
       ),
     );
+  }
+
+  void onTap(int index) {
+    setState(() {
+      currentIndex = index;
+    });
   }
 }
