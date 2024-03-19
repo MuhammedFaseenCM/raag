@@ -17,19 +17,25 @@ class SongAdapter extends TypeAdapter<Song> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Song(
-      id: fields[0] as String,
-      songModel: fields[1] as SongModel,
+      id: fields[0] as int,
+      title: fields[1] as String,
+      album: fields[2] as String,
+      path: fields[3] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Song obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.songModel);
+      ..write(obj.title)
+      ..writeByte(2)
+      ..write(obj.album)
+      ..writeByte(3)
+      ..write(obj.path);
   }
 
   @override
@@ -55,18 +61,21 @@ class PlaylistAdapter extends TypeAdapter<Playlist> {
     };
     return Playlist(
       name: fields[0] as String,
-      songModels: (fields[1] as List).cast<SongModel>(),
+      songs: (fields[1] as List).cast<Song>(),
+      id: fields[2] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Playlist obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.songModels);
+      ..write(obj.songs)
+      ..writeByte(2)
+      ..write(obj.id);
   }
 
   @override

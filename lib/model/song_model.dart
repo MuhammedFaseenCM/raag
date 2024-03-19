@@ -1,19 +1,25 @@
 import 'package:hive/hive.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 part 'song_model.g.dart';
 
 @HiveType(typeId: 0)
 class Song extends HiveObject {
-
   @HiveField(0)
-  late String id;
+  late int id;
 
   @HiveField(1)
-  late SongModel  songModel;
+  late String title;
+
+  @HiveField(2)
+  late String album;
+
+  @HiveField(3)
+  late String path;
 
   Song({
     required this.id,
-    required this.songModel,
+    required this.title,
+    required this.album,
+    required this.path,
   });
 }
 
@@ -23,10 +29,14 @@ class Playlist extends HiveObject {
   late String name;
 
   @HiveField(1)
-  late List<SongModel> songModels;
+  late List<Song> songs;
 
+  @HiveField(2)
+  late int? id;
+  /// Returns a new instance of [Playlist] based on the given parameters
   Playlist({
     required this.name,
-    required this.songModels,
+    required this.songs,
+    this.id,
   });
 }

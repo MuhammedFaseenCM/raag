@@ -22,6 +22,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   Future<void> fetchSongs() async {
     songModel = await audioQuery.querySongs();
+    Favorite.instance.getFavoriteSongs(songModel);
+    setState(() {});
   }
 
   @override
@@ -31,66 +33,60 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         child: Column(
           children: [
             _buildFavTop(context),
-            _buildFavListVIEW(),
+            _buildFavListView(),
           ],
         ),
       ),
     );
   }
 
-  FutureBuilder<List<SongModel>> _buildFavListVIEW() {
-    return FutureBuilder<List<SongModel>>(
-        future: getFavoriteSongs(songModel),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error fetching songs'),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text('No songs found'),
-            );
-          }
-          List<SongModel> favSong = snapshot.data!;
-          return ListView.builder(
-            shrinkWrap: true,
-            itemCount: favSong.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(favSong[index].title),
-                subtitle: Text(favSong[index].album!),
-                trailing: IconButton(
-                  onPressed: () {
-                    deleteFromFavorites(favSong[index].id);
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.favorite),
-                ),
-                leading: QueryArtworkWidget(
-                  controller: audioQuery,
-                  id: favSong[index].id,
-                  type: ArtworkType.AUDIO,
-                  nullArtworkWidget: Container(
-                    width: 50,
-                    height: 50,
-                    margin: const EdgeInsets.all(4.0),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage("asset/images/default_album.jpg"),
-                      ),
+  ValueListenableBuilder _buildFavListView() {
+    return ValueListenableBuilder(
+      valueListenable: favoriteSongNotifier,
+      builder: (context, favSong, _) {
+        if (favSong.isEmpty) {
+          return const Center(
+            child: Text('No songs found'),
+          );
+        }
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: favSong.length,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(favSong[index].title),
+              subtitle: Text(favSong[index].album!),
+              trailing: IconButton(
+                onPressed: () async {
+                  await Favorite.instance
+                      .deleteFromFavorites(favSong[index].id, songModel);
+                  setState(() {});
+                },
+                icon: const Icon(Icons.favorite),
+              ),
+              leading: QueryArtworkWidget(
+                controller: audioQuery,
+                id: favSong[index].id,
+                type: ArtworkType.AUDIO,
+                nullArtworkWidget: Container(
+                  width: 50,
+                  height: 50,
+                  margin: const EdgeInsets.all(4.0),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage("asset/images/default_album.jpg"),
                     ),
                   ),
                 ),
-              );
-            },
-          );
-        });
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Container _buildFavTop(BuildContext context) {

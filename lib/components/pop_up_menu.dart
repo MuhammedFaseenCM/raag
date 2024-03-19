@@ -19,7 +19,7 @@ class _PopUpState extends State<PopUp> {
         PopupMenuItem(
           value: 1,
           onTap: () {
-            addToFavorites(widget.song);
+           Favorite.instance.addToFavorites(widget.song);
             setState(() {});
           },
           // row has two child icon and text.

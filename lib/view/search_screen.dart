@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/pop_up_menu.dart';
+import 'package:raag/model/song_model.dart';
 import 'package:raag/view/song_play_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -144,6 +145,21 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
     );
+  }
+
+  List<Song> changeSongModel(List<SongModel> songModel) {
+    List<Song> songs = [];
+    for (var song in songModel) {
+      songs.add(
+        Song(
+          id: song.id,
+          title: song.title,
+          album: song.album!,
+          path: song.data,
+        ),
+      );
+    }
+    return songs;
   }
 }
 

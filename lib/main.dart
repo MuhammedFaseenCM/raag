@@ -12,6 +12,7 @@ void main() async {
   if (!Hive.isAdapterRegistered(PlaylistAdapter().typeId)) {
     Hive.registerAdapter(PlaylistAdapter());
   }
+  await Hive.openBox<Song>('songs');
   await Hive.openBox<int>('favorites');
   runApp(const MyApp());
 }

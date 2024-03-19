@@ -1,42 +1,56 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-void addToFavorites(SongModel song) {
-  final favoritesBox = Hive.box<int>('favorites');
-  favoritesBox.add(song.id);
-}
+ValueNotifier<List<SongModel>> favoriteSongNotifier = ValueNotifier([]);
 
-void deleteFromFavorites(int songId) {
-  final favoritesBox = Hive.box<int>('favorites');
-  int deleteKey = 0;
-  if (!favoritesBox.values.contains(songId)) {
-    return;
+class Favorite extends ChangeNotifier {
+  static final Favorite instance = Favorite._internal();
+
+  factory Favorite() {
+    return instance;
   }
-  final Map<dynamic, int> favorMap = favoritesBox.toMap();
 
-  favorMap.forEach((key, value) {
-    if (value == songId) {
-      deleteKey = key;
+  Favorite._internal();
+
+  Future<void> addToFavorites(SongModel song) async {
+    final favoritesBox = Hive.box<int>('favorites');
+    await favoritesBox.add(song.id);
+    favoriteSongNotifier.value.add(song);
+    favoriteSongNotifier.notifyListeners();
+  }
+
+  Future<void> deleteFromFavorites(int songId, List<SongModel> songs) async {
+    final favoritesBox = Hive.box<int>('favorites');
+    int deleteKey = 0;
+    if (!favoritesBox.values.contains(songId)) {
+      return;
     }
-  });
-  favoritesBox.delete(deleteKey);
-}
+    final Map<dynamic, int> favorMap = favoritesBox.toMap();
+    favorMap.forEach((key, value) {
+      if (value == songId) {
+        deleteKey = key;
+      }
+    });
+    await favoritesBox.delete(deleteKey);
+    await getFavoriteSongs(songs);
+  }
 
-// Example function to get all favorite songs
-Future<List<SongModel>> getFavoriteSongs(List<SongModel> songs) async {
-  List<SongModel> favSongs = [];
-  for (var song in songs) {
-    if (isFavor(song)) {
-      favSongs.add(song);
+  Future<void> getFavoriteSongs(List<SongModel> songs) async {
+    favoriteSongNotifier.value.clear();
+    for (var song in songs) {
+      if (isFavor(song)) {
+        favoriteSongNotifier.value.add(song);
+      }
     }
+    favoriteSongNotifier.notifyListeners();
   }
-  return favSongs;
-}
 
-isFavor(SongModel song) {
-  final favoritesBox = Hive.box<int>('favorites');
-  if (favoritesBox.values.contains(song.id)) {
-    return true;
+  bool isFavor(SongModel song) {
+    final favoritesBox = Hive.box<int>('favorites');
+    if (favoritesBox.values.contains(song.id)) {
+      return true;
+    }
+    return false;
   }
-  return false;
 }
