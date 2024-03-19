@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/controllers/favorite.dart';
+import 'package:raag/model/song_model.dart';
 
 class PopUp extends StatefulWidget {
-  final SongModel song;
+  final Song song;
   const PopUp({super.key, required this.song});
 
   @override

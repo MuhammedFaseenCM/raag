@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/controllers/favorite.dart';
+import 'package:raag/controllers/songs.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -21,8 +22,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   }
 
   Future<void> fetchSongs() async {
-    songModel = await audioQuery.querySongs();
-    Favorite.instance.getFavoriteSongs(songModel);
+    Favorite.instance.getFavoriteSongs(songsNotifier.value);
     setState(() {});
   }
 
@@ -60,7 +60,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               trailing: IconButton(
                 onPressed: () async {
                   await Favorite.instance
-                      .deleteFromFavorites(favSong[index].id, songModel);
+                      .deleteFromFavorites(favSong[index].id, songsNotifier.value);
                   setState(() {});
                 },
                 icon: const Icon(Icons.favorite),

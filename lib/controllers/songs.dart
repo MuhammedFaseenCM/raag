@@ -5,10 +5,10 @@ import 'package:raag/model/song_model.dart';
 ValueNotifier<List<Song>> songsNotifier = ValueNotifier([]);
 
 class SongsController extends ChangeNotifier {
-  static final SongsController _instance = SongsController._internal();
+  static final SongsController instance = SongsController._internal();
 
   factory SongsController() {
-    return _instance;
+    return instance;
   }
 
   SongsController._internal();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/pop_up_menu.dart';
+import 'package:raag/controllers/songs.dart';
 import 'package:raag/model/song_model.dart';
 import 'package:raag/view/song_play_screen.dart';
 
@@ -26,6 +27,17 @@ class _SearchScreenState extends State<SearchScreen> {
     hasPermission = await audioQuery.checkAndRequest(
       retryRequest: retry,
     );
+    if (hasPermission) {
+      List<SongModel> songModel = await audioQuery.querySongs(
+        sortType: null,
+        orderType: OrderType.ASC_OR_SMALLER,
+        uriType: UriType.EXTERNAL,
+        ignoreCase: true,
+      );
+      await SongsController.instance.addSongsToHive(
+        changeSongModel(songModel),
+      );
+    }
 
     hasPermission ? setState(() {}) : null;
   }
@@ -68,29 +80,17 @@ class _SearchScreenState extends State<SearchScreen> {
                 color: Colors.blue[700],
               ),
             ),
-            hasPermission
-                ? FutureBuilder<List<SongModel>>(
-                    future: audioQuery.querySongs(
-                      sortType: null,
-                      orderType: OrderType.ASC_OR_SMALLER,
-                      uriType: UriType.EXTERNAL,
-                      ignoreCase: true,
-                    ),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (snapshot.hasError) {
-                        return const Center(
-                          child: Text('Error fetching songs'),
-                        );
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            if (hasPermission) ValueListenableBuilder<List<Song>>(
+                valueListenable: songsNotifier,
+                         
+                    builder: (context, songs,_) {
+                      if (songs.isEmpty) {
                         return const Center(
                           child: Text('No songs found'),
                         );
                       }
-                      List<SongModel> songs = snapshot.data!;
+                    
+
                       return ListView.builder(
                         shrinkWrap: true,
                         itemCount: songs.length,
@@ -130,15 +130,14 @@ class _SearchScreenState extends State<SearchScreen> {
                               style: const TextStyle(color: Colors.blue),
                             ),
                             subtitle: Text(
-                              songs[index].album!,
+                              songs[index].album,
                               style: const TextStyle(color: Colors.blue),
                             ),
                             trailing: PopUp(song: songs[index]),
                           );
                         },
                       );
-                    })
-                : const Center(
+                    }) else const Center(
                     child: Text('Error fetching songs'),
                   ),
           ],

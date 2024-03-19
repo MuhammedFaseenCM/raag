@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:raag/model/song_model.dart';
 
 class PlaySong extends StatefulWidget {
-  final SongModel song;
+  final Song song;
   const PlaySong({super.key, required this.song});
 
   @override
@@ -21,7 +22,7 @@ class _PlaySongState extends State<PlaySong> {
   }
 
   Future<void> playSong() async {
-    duration = await player.setFilePath(widget.song.data);
+    duration = await player.setFilePath(widget.song.path);
     player.play();
     setState(() {});
   }
@@ -84,7 +85,7 @@ class _PlaySongState extends State<PlaySong> {
                   ),
                 ),
                 Text(
-                  widget.song.album ?? '',
+                  widget.song.album,
                   style: const TextStyle(
                     fontSize: 15,
                     color: Colors.white,
