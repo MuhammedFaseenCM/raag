@@ -29,33 +29,35 @@ class _MainScreenState extends State<MainScreen> {
                 PlayListScreen()
               ],
             ),
-            Positioned(
-              bottom: 0.0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                width: MediaQuery.sizeOf(context).width,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12.0),
-                      topRight: Radius.circular(12.0)),
-                  color: Colors.blue[800],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Tum jo aye"),
-                    IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.play_arrow))
-                  ],
-                ),
-              ),
-            )
+            // _buildNowPlaying(context)
           ],
         ),
         bottomNavigationBar: BottomNavBar(
           currentIndex: currentIndex,
           onTap: onTap,
+        ),
+      ),
+    );
+  }
+
+  Positioned _buildNowPlaying(BuildContext context) {
+    return Positioned(
+      bottom: 0.0,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        width: MediaQuery.sizeOf(context).width,
+        height: 50.0,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12.0), topRight: Radius.circular(12.0)),
+          color: Colors.blue[800],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Tum jo aye"),
+            IconButton(onPressed: () {}, icon: const Icon(Icons.play_arrow))
+          ],
         ),
       ),
     );

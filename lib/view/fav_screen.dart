@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/controllers/favorite.dart';
 import 'package:raag/controllers/songs.dart';
+import 'package:raag/view/song_play_screen.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -12,18 +13,11 @@ class FavoriteScreen extends StatefulWidget {
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
   late OnAudioQuery audioQuery;
-  List<SongModel> songModel = [];
 
   @override
   void initState() {
     audioQuery = OnAudioQuery();
-    fetchSongs();
     super.initState();
-  }
-
-  Future<void> fetchSongs() async {
-    Favorite.instance.getFavoriteSongs(songsNotifier.value);
-    setState(() {});
   }
 
   @override
@@ -55,15 +49,24 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             return ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlaySong(song: favSong[index]),
+                  ),
+                );
+              },
               title: Text(favSong[index].title),
               subtitle: Text(favSong[index].album!),
               trailing: IconButton(
                 onPressed: () async {
-                  await Favorite.instance
-                      .deleteFromFavorites(favSong[index].id, songsNotifier.value);
+                  await Favorite.instance.deleteFromFavorites(
+                      favSong[index].id, songsNotifier.value);
                   setState(() {});
                 },
-                icon: const Icon(Icons.favorite),
+                color: Colors.red,
+                icon: const Icon(Icons.favorite_border),
               ),
               leading: QueryArtworkWidget(
                 controller: audioQuery,

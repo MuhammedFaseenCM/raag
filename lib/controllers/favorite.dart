@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:raag/controllers/songs.dart';
 import 'package:raag/model/song_model.dart';
 
 ValueNotifier<List<Song>> favoriteSongNotifier = ValueNotifier([]);
@@ -13,11 +14,15 @@ class Favorite extends ChangeNotifier {
 
   Favorite._internal();
 
-  Future<void> addToFavorites(Song song) async {
+  Future<bool> addToFavorites(Song song) async {
     final favoritesBox = Hive.box<int>('favorites');
+    if (favoritesBox.values.contains(song.id)) {
+      return false;
+    }
     await favoritesBox.add(song.id);
     favoriteSongNotifier.value.add(song);
     favoriteSongNotifier.notifyListeners();
+    return true;
   }
 
   Future<void> deleteFromFavorites(int songId, List<Song> songs) async {
@@ -33,12 +38,12 @@ class Favorite extends ChangeNotifier {
       }
     });
     await favoritesBox.delete(deleteKey);
-    await getFavoriteSongs(songs);
+    await getFavoriteSongs();
   }
 
-  Future<void> getFavoriteSongs(List<Song> songs) async {
+  Future<void> getFavoriteSongs() async {
     favoriteSongNotifier.value.clear();
-    for (var song in songs) {
+    for (var song in songsNotifier.value) {
       if (isFavor(song)) {
         favoriteSongNotifier.value.add(song);
       }

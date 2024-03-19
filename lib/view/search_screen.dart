@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/pop_up_menu.dart';
+import 'package:raag/controllers/favorite.dart';
 import 'package:raag/controllers/songs.dart';
 import 'package:raag/model/song_model.dart';
 import 'package:raag/view/song_play_screen.dart';
@@ -37,6 +38,8 @@ class _SearchScreenState extends State<SearchScreen> {
       await SongsController.instance.addSongsToHive(
         changeSongModel(songModel),
       );
+      await Favorite.instance.getFavoriteSongs();
+      setState(() {});
     }
 
     hasPermission ? setState(() {}) : null;
@@ -80,66 +83,67 @@ class _SearchScreenState extends State<SearchScreen> {
                 color: Colors.blue[700],
               ),
             ),
-            if (hasPermission) ValueListenableBuilder<List<Song>>(
-                valueListenable: songsNotifier,
-                         
-                    builder: (context, songs,_) {
-                      if (songs.isEmpty) {
-                        return const Center(
-                          child: Text('No songs found'),
-                        );
-                      }
-                    
+            if (hasPermission)
+              ValueListenableBuilder<List<Song>>(
+                  valueListenable: songsNotifier,
+                  builder: (context, songs, _) {
+                    if (songs.isEmpty) {
+                      return const Center(
+                        child: Text('No songs found'),
+                      );
+                    }
 
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: songs.length,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PlaySong(
-                                    song: songs[index],
-                                  ),
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: songs.length,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PlaySong(
+                                  song: songs[index],
                                 ),
-                              );
-                            },
-                            leading: QueryArtworkWidget(
-                              controller: audioQuery,
-                              id: songs[index].id,
-                              type: ArtworkType.AUDIO,
-                              nullArtworkWidget: Container(
-                                width: 50,
-                                height: 50,
-                                margin: const EdgeInsets.all(4.0),
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: AssetImage(
-                                        "asset/images/default_album.jpg"),
-                                  ),
+                              ),
+                            );
+                          },
+                          leading: QueryArtworkWidget(
+                            controller: audioQuery,
+                            id: songs[index].id,
+                            type: ArtworkType.AUDIO,
+                            nullArtworkWidget: Container(
+                              width: 50,
+                              height: 50,
+                              margin: const EdgeInsets.all(4.0),
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                      "asset/images/default_album.jpg"),
                                 ),
                               ),
                             ),
-                            title: Text(
-                              songs[index].title,
-                              style: const TextStyle(color: Colors.blue),
-                            ),
-                            subtitle: Text(
-                              songs[index].album,
-                              style: const TextStyle(color: Colors.blue),
-                            ),
-                            trailing: PopUp(song: songs[index]),
-                          );
-                        },
-                      );
-                    }) else const Center(
-                    child: Text('Error fetching songs'),
-                  ),
+                          ),
+                          title: Text(
+                            songs[index].title,
+                            style: const TextStyle(color: Colors.blue),
+                          ),
+                          subtitle: Text(
+                            songs[index].album,
+                            style: const TextStyle(color: Colors.blue),
+                          ),
+                          trailing: PopUp(song: songs[index]),
+                        );
+                      },
+                    );
+                  })
+            else
+              const Center(
+                child: Text('Error fetching songs'),
+              ),
           ],
         ),
       ),

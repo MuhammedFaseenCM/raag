@@ -18,14 +18,25 @@ class _PopUpState extends State<PopUp> {
         // popupmenu item 1
         PopupMenuItem(
           value: 1,
-          onTap: () {
-           Favorite.instance.addToFavorites(widget.song);
+          onTap: () async {
+            bool result = await Favorite.instance.addToFavorites(widget.song);
+            if (!result) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Already in favorites'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+            }
             setState(() {});
           },
           // row has two child icon and text.
           child: const Row(
             children: [
-              Icon(Icons.favorite),
+              Icon(
+                Icons.favorite,
+                color: Colors.lightBlue,
+              ),
               SizedBox(
                 // sized box with width 10
                 width: 10,
