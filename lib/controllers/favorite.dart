@@ -25,7 +25,7 @@ class Favorite extends ChangeNotifier {
     return true;
   }
 
-  Future<void> deleteFromFavorites(int songId, List<Song> songs) async {
+  Future<void> deleteFromFavorites(int songId) async {
     final favoritesBox = Hive.box<int>('favorites');
     int deleteKey = 0;
     if (!favoritesBox.values.contains(songId)) {

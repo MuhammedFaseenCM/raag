@@ -14,6 +14,7 @@ class SongsController extends ChangeNotifier {
   SongsController._internal();
 
   Future<void> addSongsToHive(List<Song> songs) async {
+    songsNotifier.value.clear();
     final box = Hive.box<Song>('songs');
     await box.addAll(songs);
     songsNotifier.value.addAll(songs);

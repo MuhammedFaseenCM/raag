@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:raag/components/listanable_build.dart';
 import 'package:raag/controllers/favorite.dart';
-import 'package:raag/controllers/songs.dart';
-import 'package:raag/view/song_play_screen.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -27,68 +26,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         child: Column(
           children: [
             _buildFavTop(context),
-            _buildFavListView(),
+           ListenableWidget(valueListenable: favoriteSongNotifier),
           ],
         ),
       ),
-    );
-  }
-
-  ValueListenableBuilder _buildFavListView() {
-    return ValueListenableBuilder(
-      valueListenable: favoriteSongNotifier,
-      builder: (context, favSong, _) {
-        if (favSong.isEmpty) {
-          return const Center(
-            child: Text('No songs found'),
-          );
-        }
-        return ListView.builder(
-          shrinkWrap: true,
-          itemCount: favSong.length,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return ListTile(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlaySong(song: favSong[index]),
-                  ),
-                );
-              },
-              title: Text(favSong[index].title),
-              subtitle: Text(favSong[index].album!),
-              trailing: IconButton(
-                onPressed: () async {
-                  await Favorite.instance.deleteFromFavorites(
-                      favSong[index].id, songsNotifier.value);
-                  setState(() {});
-                },
-                color: Colors.red,
-                icon: const Icon(Icons.favorite_border),
-              ),
-              leading: QueryArtworkWidget(
-                controller: audioQuery,
-                id: favSong[index].id,
-                type: ArtworkType.AUDIO,
-                nullArtworkWidget: Container(
-                  width: 50,
-                  height: 50,
-                  margin: const EdgeInsets.all(4.0),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage("asset/images/default_album.jpg"),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 

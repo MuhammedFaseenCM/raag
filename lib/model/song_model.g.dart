@@ -19,7 +19,7 @@ class SongAdapter extends TypeAdapter<Song> {
     return Song(
       id: fields[0] as int,
       title: fields[1] as String,
-      album: fields[2] as String,
+      album: fields[2] as String?,
       path: fields[3] as String,
     );
   }

@@ -10,7 +10,7 @@ class Song extends HiveObject {
   late String title;
 
   @HiveField(2)
-  late String album;
+  late String? album;
 
   @HiveField(3)
   late String path;
@@ -18,7 +18,7 @@ class Song extends HiveObject {
   Song({
     required this.id,
     required this.title,
-    required this.album,
+    this.album,
     required this.path,
   });
 }
@@ -33,6 +33,7 @@ class Playlist extends HiveObject {
 
   @HiveField(2)
   late int? id;
+
   /// Returns a new instance of [Playlist] based on the given parameters
   Playlist({
     required this.name,

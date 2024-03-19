@@ -19,29 +19,30 @@ class _PopUpState extends State<PopUp> {
         PopupMenuItem(
           value: 1,
           onTap: () async {
-            bool result = await Favorite.instance.addToFavorites(widget.song);
-            if (!result) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Already in favorites'),
-                  duration: Duration(seconds: 1),
-                ),
-              );
+            if (favoriteSongNotifier.value.contains(widget.song)) {
+              await Favorite.instance.deleteFromFavorites(widget.song.id);
+            } else {
+              bool result = await Favorite.instance.addToFavorites(widget.song);
+              if (!result) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Already in favorites'),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              }
             }
             setState(() {});
           },
           // row has two child icon and text.
-          child: const Row(
+          child: Row(
             children: [
               Icon(
-                Icons.favorite,
+                isFavSong(widget.song) ? Icons.favorite_border : Icons.favorite,
                 color: Colors.lightBlue,
               ),
-              SizedBox(
-                // sized box with width 10
-                width: 10,
-              ),
-              Text("Like")
+              const SizedBox(width: 10),
+              Text(isFavSong(widget.song) ? "Unlike" : "Like")
             ],
           ),
         ),
@@ -65,5 +66,9 @@ class _PopUpState extends State<PopUp> {
       offset: const Offset(0, 50),
       elevation: 2,
     );
+  }
+
+  bool isFavSong(Song song) {
+    return Favorite.instance.isFavor(song);
   }
 }

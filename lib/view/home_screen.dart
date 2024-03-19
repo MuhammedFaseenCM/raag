@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:raag/components/listanable_build.dart';
+import 'package:raag/controllers/recently_played.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,6 +10,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    RecentlyPlayed.instance.getRecentSongs();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -120,38 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: 10,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Container(
-                      width: 80,
-                      height: 80,
-                      margin: const EdgeInsets.all(4.0),
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image:
-                                  AssetImage('asset/images/sita_ramam.jpg'))),
-                    ),
-                    title: const Text(
-                      "Kannil kannil",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    subtitle: const Text(
-                      "Sitaramam",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    trailing: const Icon(
-                      Icons.more_vert,
-                      color: Colors.white,
-                    ),
-                  );
-                },
-              )
+              ListenableWidget(valueListenable: recentlyPlayed),
             ],
           ),
         ),
