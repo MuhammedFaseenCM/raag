@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/listanable_build.dart';
 import 'package:raag/controllers/songs.dart';
+import 'package:raag/model/song_model.dart';
 
 class SearchScreen extends StatefulWidget {
   final bool hasPermission;
@@ -63,18 +64,31 @@ class _SearchScreenState extends State<SearchScreen> {
 
   SizedBox _buildTextField() {
     return SizedBox(
-            height: 50,
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(borderSide: BorderSide.none),
-                filled: true,
-                fillColor: Colors.blueGrey[200],
-                hintText: 'What do you want to listen to ?',
-                hintStyle: TextStyle(color: Colors.grey[700]),
-                prefixIcon: const Icon(Icons.search),
-              ),
-            ),
-          );
+      height: 50,
+      child: TextFormField(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(borderSide: BorderSide.none),
+          filled: true,
+          fillColor: Colors.blueGrey[200],
+          hintText: 'What do you want to listen to ?',
+          hintStyle: TextStyle(color: Colors.grey[700]),
+          prefixIcon: const Icon(Icons.search),
+        ),
+      ),
+    );
+  }
+
+  List<Song> changeSongModel(List<SongModel> songModel) {
+    return songModel
+        .map(
+          (song) => Song(
+            id: song.id,
+            title: song.title,
+            album: song.album!,
+            path: song.data,
+          ),
+        )
+        .toList();
   }
 }
 
