@@ -84,33 +84,31 @@ class _SearchScreenState extends State<SearchScreen> {
 
   SizedBox _buildTextField() {
     return SizedBox(
-            height: 50,
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(borderSide: BorderSide.none),
-                filled: true,
-                fillColor: Colors.blueGrey[200],
-                hintText: 'What do you want to listen to ?',
-                hintStyle: TextStyle(color: Colors.grey[700]),
-                prefixIcon: const Icon(Icons.search),
-              ),
-            ),
-          );
+      height: 50,
+      child: TextFormField(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(borderSide: BorderSide.none),
+          filled: true,
+          fillColor: Colors.blueGrey[200],
+          hintText: 'What do you want to listen to ?',
+          hintStyle: TextStyle(color: Colors.grey[700]),
+          prefixIcon: const Icon(Icons.search),
+        ),
+      ),
+    );
   }
 
   List<Song> changeSongModel(List<SongModel> songModel) {
-    List<Song> songs = [];
-    for (var song in songModel) {
-      songs.add(
-        Song(
-          id: song.id,
-          title: song.title,
-          album: song.album!,
-          path: song.data,
-        ),
-      );
-    }
-    return songs;
+    return songModel
+        .map(
+          (song) => Song(
+            id: song.id,
+            title: song.title,
+            album: song.album!,
+            path: song.data,
+          ),
+        )
+        .toList();
   }
 }
 

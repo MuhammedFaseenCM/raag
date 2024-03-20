@@ -3,6 +3,7 @@ part 'song_model.g.dart';
 
 @HiveType(typeId: 0)
 class Song extends HiveObject {
+
   @HiveField(0)
   late int id;
 
