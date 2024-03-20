@@ -19,6 +19,7 @@ class RecentlyPlayed extends ChangeNotifier {
       recentSongs.delete(recentSongs.values.toList().indexOf(song.id));
       recentlyPlayed.value.remove(song);
       recentlyPlayed.value.insert(0, song);
+      recentlyPlayed.notifyListeners();
       return;
     }
     await recentSongs.add(song.id);

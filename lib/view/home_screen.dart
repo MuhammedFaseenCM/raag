@@ -1,15 +1,21 @@
+
 import 'package:flutter/material.dart';
 import 'package:raag/components/listanable_build.dart';
+import 'package:raag/components/query_art_work_widget.dart';
 import 'package:raag/controllers/recently_played.dart';
+import 'package:raag/model/song_model.dart';
+import 'package:raag/view/song_play_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Song? shuffleSong;
+  const HomeScreen({super.key,  this.shuffleSong});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   @override
   void initState() {
     RecentlyPlayed.instance.getRecentSongs();
@@ -49,15 +55,22 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 12),
               Center(
-                child: Container(
-                  height: 250,
-                  width: 320,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      image: const DecorationImage(
-                          fit: BoxFit.cover,
-                          image:
-                              AssetImage('asset/images/assassin_creed.jpg'))),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaySong(
+                          song: widget.shuffleSong!,
+                        ),
+                      ),
+                    );
+                  },
+                  child: QueryArtWork(
+                    songId: widget.shuffleSong?.id??0,
+                    width: 320,
+                    height: 250,
+                  ),
                 ),
               ),
               const SizedBox(height: 14),

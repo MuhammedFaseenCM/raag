@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/listanable_build.dart';
-import 'package:raag/controllers/favorite.dart';
 import 'package:raag/controllers/songs.dart';
-import 'package:raag/model/song_model.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  final bool hasPermission;
+  const SearchScreen({super.key, required this.hasPermission});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -20,29 +19,9 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     audioQuery = OnAudioQuery();
-    fetchSongs();
   }
 
-  Future<void> fetchSongs({bool retry = false}) async {
-    hasPermission = await audioQuery.checkAndRequest(
-      retryRequest: retry,
-    );
-    if (hasPermission) {
-      List<SongModel> songModel = await audioQuery.querySongs(
-        sortType: null,
-        orderType: OrderType.ASC_OR_SMALLER,
-        uriType: UriType.EXTERNAL,
-        ignoreCase: true,
-      );
-      await SongsController.instance.addSongsToHive(
-        changeSongModel(songModel),
-      );
-      await Favorite.instance.getFavoriteSongs();
-      setState(() {});
-    }
 
-    hasPermission ? setState(() {}) : null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +49,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 color: Colors.blue[700],
               ),
             ),
-            if (hasPermission)
+            if (widget.hasPermission)
               ListenableWidget(valueListenable: songsNotifier)
             else
               const Center(
@@ -96,21 +75,6 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
           );
-  }
-
-  List<Song> changeSongModel(List<SongModel> songModel) {
-    List<Song> songs = [];
-    for (var song in songModel) {
-      songs.add(
-        Song(
-          id: song.id,
-          title: song.title,
-          album: song.album!,
-          path: song.data,
-        ),
-      );
-    }
-    return songs;
   }
 }
 
