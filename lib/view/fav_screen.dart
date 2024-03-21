@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/listanable_build.dart';
-import 'package:raag/controllers/favorite.dart';
+import 'package:raag/controllers/favorite_controller.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});

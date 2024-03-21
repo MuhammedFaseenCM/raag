@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import 'package:raag/controllers/songs.dart';
+import 'package:raag/controllers/songs_controller.dart';
 import 'package:raag/model/song_model.dart';
 
 ValueNotifier<List<Song>> recentlyPlayed = ValueNotifier<List<Song>>([]);

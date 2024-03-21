@@ -5,16 +5,16 @@ part 'song_model.g.dart';
 class Song extends HiveObject {
 
   @HiveField(0)
-  late int id;
+  final int id;
 
   @HiveField(1)
-  late String title;
+  final String title;
 
   @HiveField(2)
-  late String? album;
+  final String? album;
 
   @HiveField(3)
-  late String path;
+  final String path;
 
   Song({
     required this.id,
@@ -27,13 +27,13 @@ class Song extends HiveObject {
 @HiveType(typeId: 1)
 class Playlist extends HiveObject {
   @HiveField(0)
-  late String name;
+  final String name;
 
   @HiveField(1)
-  late List<Song> songs;
+  final List<Song> songs;
 
   @HiveField(2)
-  late int? id;
+  final int? id;
 
   /// Returns a new instance of [Playlist] based on the given parameters
   Playlist({

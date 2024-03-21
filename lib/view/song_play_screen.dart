@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:raag/controllers/recently_played.dart';
+import 'package:raag/controllers/recently_played_controller.dart';
 import 'package:raag/model/song_model.dart';
 
 class PlaySong extends StatefulWidget {
