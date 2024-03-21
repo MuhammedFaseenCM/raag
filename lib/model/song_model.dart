@@ -3,7 +3,6 @@ part 'song_model.g.dart';
 
 @HiveType(typeId: 0)
 class Song extends HiveObject {
-
   @HiveField(0)
   final int id;
 
@@ -41,4 +40,12 @@ class Playlist extends HiveObject {
     required this.songs,
     this.id,
   });
+
+  Playlist copyWith({String? name, List<Song>? songs, int? id}) {
+    return Playlist(
+      name: name ?? this.name,
+      songs: songs ?? this.songs,
+      id: id ?? this.id,
+    );
+  }
 }

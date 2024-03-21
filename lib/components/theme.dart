@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TextTheme {
+class AppStyle {
 
   static const TextStyle headline1 = TextStyle(
     fontSize: 24,

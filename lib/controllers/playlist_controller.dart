@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:raag/model/song_model.dart';
 
@@ -12,6 +14,8 @@ class PlaylistController extends ChangeNotifier {
   }
 
   PlaylistController._internal();
+
+  TextEditingController playListController = TextEditingController();
 
   Future<void> createPlayList(Playlist playlist) async {
     final playListBox = Hive.box<Playlist>('playlist');
@@ -72,5 +76,56 @@ class PlaylistController extends ChangeNotifier {
     playlistNotifier.value.clear();
     playlistNotifier.value.addAll(playListBox.values.toList());
     playlistNotifier.notifyListeners();
+  }
+
+  Future<void> setPlayListName(
+      {required BuildContext context,
+      bool isEdit = false,
+      int? index,
+      Playlist? playlist}) async {
+    showAdaptiveDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(isEdit ? "Edit play list" : "Add new play list"),
+          content: TextFormField(
+            controller: playListController,
+            decoration: const InputDecoration(
+              labelText: "Play list name",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  playListController.clear();
+                  Navigator.pop(context);
+                },
+                child: const Text("Cancel")),
+            TextButton(
+                onPressed: () async {
+                  if (isEdit) {
+                    await PlaylistController.instance.editPlayList(
+                        index!,
+                        playlist!.copyWith(
+                          name: playListController.text.trim(),
+                        ));
+                  } else {
+                    await PlaylistController.instance.createPlayList(
+                      Playlist(
+                        name: playListController.text.trim(),
+                        songs: [],
+                      ),
+                    );
+                  }
+                  playListController.clear();
+
+                  Navigator.pop(context);
+                },
+                child: const Text("Confirm"))
+          ],
+        );
+      },
+    );
   }
 }
