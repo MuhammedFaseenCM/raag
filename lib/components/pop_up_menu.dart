@@ -5,7 +5,15 @@ import 'package:raag/model/song_model.dart';
 
 class PopUp extends StatefulWidget {
   final Song song;
-  const PopUp({super.key, required this.song});
+  final bool isPlaylist;
+  final int? playListIndex;
+  final int? songIndex;
+  const PopUp(
+      {super.key,
+      required this.song,
+      this.isPlaylist = false,
+      this.playListIndex,
+      this.songIndex});
 
   @override
   State<PopUp> createState() => _PopUpState();
@@ -50,19 +58,23 @@ class _PopUpState extends State<PopUp> {
         // popupmenu item 2
         PopupMenuItem(
           value: 2,
-          // row has two child icon and text
-          onTap: () {
-            PlaylistController.instance
-                .showPlaylistBottomSheet(context, widget.song);
+          onTap: () async {
+            if (widget.isPlaylist) {
+              await PlaylistController.instance.deleteSongFromPlayList(
+                  widget.playListIndex ?? 0, widget.songIndex ?? 0);
+              setState(() {});
+            } else {
+              PlaylistController.instance
+                  .showPlaylistBottomSheet(context, widget.song);
+            }
           },
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.playlist_add),
-              SizedBox(
-                // sized box with width 10
+              Icon(widget.isPlaylist ? Icons.delete : Icons.playlist_add),
+              const SizedBox(
                 width: 10,
               ),
-              Text("Playlist")
+              Text(widget.isPlaylist ? 'Delete' : "Playlist")
             ],
           ),
         ),

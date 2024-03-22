@@ -150,6 +150,7 @@ class PlaylistController extends ChangeNotifier {
                           title: Text(playList.name),
                           onTap: () {
                             addSongToPlayList(index, song);
+                            Navigator.pop(context);
                           },
                           leading: const Icon(Icons.playlist_add),
                           trailing: IconButton(

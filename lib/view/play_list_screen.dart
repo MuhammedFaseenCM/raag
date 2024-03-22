@@ -59,8 +59,10 @@ class _PlayListScreenState extends State<PlayListScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            PlaylistFolderScreen(playlist: playlist[index]),
+                        builder: (context) => PlaylistFolderScreen(
+                          playlist: playlist[index],
+                          playListIndex: index,
+                        ),
                       ),
                     );
                   },
@@ -101,8 +103,8 @@ class _PlayListScreenState extends State<PlayListScreen> {
           },
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => PlaylistController.instance.setPlayListName(
-              context: context),
+          onPressed: () =>
+              PlaylistController.instance.setPlayListName(context: context),
           child: const Icon(Icons.add),
         ));
   }

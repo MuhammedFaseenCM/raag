@@ -1,40 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:raag/components/pop_up_menu.dart';
+import 'package:raag/components/query_art_work_widget.dart';
+import 'package:raag/components/theme.dart';
+import 'package:raag/controllers/playlist_controller.dart';
 import 'package:raag/model/song_model.dart';
 
 class PlaylistFolderScreen extends StatelessWidget {
   final Playlist playlist;
-  const PlaylistFolderScreen({super.key, required this.playlist});
+  final int playListIndex;
+  const PlaylistFolderScreen({
+    super.key,
+    required this.playlist,
+    required this.playListIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(playlist.name),
+        leading: InkWell(
+            onTap: () => Navigator.pop(context),
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.blue,
+            )),
+        title: Text(
+          playlist.name,
+          style: AppStyle.headline2.copyWith(color: Colors.blue),
+        ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListView.builder(
+      body: ValueListenableBuilder(
+          valueListenable: playlistNotifier,
+          builder: (context, playlists, _) {
+            Playlist playlist = playlists[playListIndex];
+            if (playlist.songs.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "${playlist.name} is empty",
+                      style: AppStyle.headline1,
+                    ),
+                    const Text('Please add some songs to enjoy your music')
+                  ],
+                ),
+              );
+            }
+            return ListView.builder(
               shrinkWrap: true,
               itemCount: playlist.songs.length,
               itemBuilder: (context, index) {
                 final Song song = playlist.songs[index];
                 return ListTile(
-                  title: Text(song.title),
-                  subtitle: Text(song.album!),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () {
-                      // Show the popup menu
-                    },
+                  leading: QueryArtWork(songId: song.id),
+                  title: Text(
+                    song.title,
+                    style: AppStyle.headline4.copyWith(color: Colors.blue),
+                  ),
+                  subtitle: Text(
+                    song.album!,
+                    style: AppStyle.bodyText1.copyWith(color: Colors.blue),
+                  ),
+                  trailing: PopUp(
+                    song: song,
+                    isPlaylist: true,
+                    songIndex: index,
+                    playListIndex: playListIndex,
                   ),
                 );
               },
-            ),
-          ],
-        ),
-      ),
+            );
+          }),
     );
   }
 }
