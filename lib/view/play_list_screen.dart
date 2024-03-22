@@ -18,7 +18,6 @@ class _PlayListScreenState extends State<PlayListScreen> {
 
   @override
   void initState() {
-    PlaylistController.instance.getPlayList();
     super.initState();
   }
 

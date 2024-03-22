@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/bottom_nav_bar.dart';
 import 'package:raag/controllers/favorite_controller.dart';
+import 'package:raag/controllers/playlist_controller.dart';
+import 'package:raag/controllers/recently_played_controller.dart';
 import 'package:raag/controllers/songs_controller.dart';
 import 'package:raag/model/song_model.dart';
 import 'package:raag/view/fav_screen.dart';
@@ -23,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
 
   late OnAudioQuery audioQuery;
   bool hasPermission = false;
-   Song? shuffleSong;
+  Song? shuffleSong;
 
   @override
   void initState() {
@@ -47,6 +49,8 @@ class _MainScreenState extends State<MainScreen> {
         changeSongModel(songModel),
       );
       await Favorite.instance.getFavoriteSongs();
+      await PlaylistController.instance.getPlayList();
+      await RecentlyPlayed.instance.getRecentSongs();
       Random random = Random();
       int randomIndex = random.nextInt(songsNotifier.value.length);
       shuffleSong = songsNotifier.value[randomIndex];
@@ -81,7 +85,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Positioned _buildNowPlaying(BuildContext context) {
+  Positioned buildNowPlaying(BuildContext context) {
     return Positioned(
       bottom: 0.0,
       child: Container(

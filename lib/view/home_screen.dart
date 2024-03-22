@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:raag/components/listanable_build.dart';
 import 'package:raag/components/query_art_work_widget.dart';
@@ -8,17 +7,15 @@ import 'package:raag/view/song_play_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Song? shuffleSong;
-  const HomeScreen({super.key,  this.shuffleSong});
+  const HomeScreen({super.key, this.shuffleSong});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   void initState() {
-    RecentlyPlayed.instance.getRecentSongs();
     super.initState();
   }
 
@@ -67,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                   child: QueryArtWork(
-                    songId: widget.shuffleSong?.id??0,
+                    songId: widget.shuffleSong?.id ?? 0,
                     width: 320,
                     height: 250,
                   ),

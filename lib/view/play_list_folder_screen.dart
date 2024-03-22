@@ -12,6 +12,29 @@ class PlaylistFolderScreen extends StatelessWidget {
         title: Text(playlist.name),
         centerTitle: true,
       ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: playlist.songs.length,
+              itemBuilder: (context, index) {
+                final Song song = playlist.songs[index];
+                return ListTile(
+                  title: Text(song.title),
+                  subtitle: Text(song.album!),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () {
+                      // Show the popup menu
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

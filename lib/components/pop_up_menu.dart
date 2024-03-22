@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raag/controllers/favorite_controller.dart';
+import 'package:raag/controllers/playlist_controller.dart';
 import 'package:raag/model/song_model.dart';
 
 class PopUp extends StatefulWidget {
@@ -50,7 +51,10 @@ class _PopUpState extends State<PopUp> {
         PopupMenuItem(
           value: 2,
           // row has two child icon and text
-          onTap: () {},
+          onTap: () {
+            PlaylistController.instance
+                .showPlaylistBottomSheet(context, widget.song);
+          },
           child: const Row(
             children: [
               Icon(Icons.playlist_add),

@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:raag/model/song_model.dart';
 
@@ -124,6 +122,50 @@ class PlaylistController extends ChangeNotifier {
                 },
                 child: const Text("Confirm"))
           ],
+        );
+      },
+    );
+  }
+
+  void showPlaylistBottomSheet(context, Song song) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return ValueListenableBuilder(
+          valueListenable: playlistNotifier,
+          builder: (context, playlist, child) {
+            return SizedBox(
+              height: MediaQuery.sizeOf(context).height * 0.8,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    const Text("Add song to playlist"),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: playlist.length,
+                      itemBuilder: (context, index) {
+                        final Playlist playList = playlist[index];
+                        return ListTile(
+                          title: Text(playList.name),
+                          onTap: () {
+                            addSongToPlayList(index, song);
+                          },
+                          leading: const Icon(Icons.playlist_add),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              PlaylistController.instance.deletePlayList(index);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
