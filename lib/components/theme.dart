@@ -5,6 +5,7 @@ class AppStyle {
   static const TextStyle headline1 = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.bold,
+    color: Colors.blueGrey,
   );
 
   static const TextStyle headline2 = TextStyle(

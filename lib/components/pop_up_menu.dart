@@ -7,13 +7,16 @@ class PopUp extends StatefulWidget {
   final Song song;
   final bool isPlaylist;
   final int? playListIndex;
+  final bool isRecent;
   final int? songIndex;
-  const PopUp(
-      {super.key,
-      required this.song,
-      this.isPlaylist = false,
-      this.playListIndex,
-      this.songIndex});
+  const PopUp({
+    super.key,
+    required this.song,
+    this.isPlaylist = false,
+    this.playListIndex,
+    this.songIndex,
+    this.isRecent = false,
+  });
 
   @override
   State<PopUp> createState() => _PopUpState();
@@ -81,6 +84,7 @@ class _PopUpState extends State<PopUp> {
       ],
       offset: const Offset(0, 50),
       elevation: 2,
+      iconColor: widget.isRecent ? Colors.white : Colors.blue,
     );
   }
 

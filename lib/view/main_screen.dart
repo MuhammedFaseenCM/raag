@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/bottom_nav_bar.dart';
 import 'package:raag/controllers/favorite_controller.dart';
@@ -61,11 +62,11 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            IndexedStack(
+    return Scaffold(
+      body: Stack(
+        children: [
+          SafeArea(
+            child: IndexedStack(
               index: currentIndex,
               children: [
                 HomeScreen(shuffleSong: shuffleSong),
@@ -74,13 +75,13 @@ class _MainScreenState extends State<MainScreen> {
                 const PlayListScreen()
               ],
             ),
-            // _buildNowPlaying(context)
-          ],
-        ),
-        bottomNavigationBar: BottomNavBar(
-          currentIndex: currentIndex,
-          onTap: onTap,
-        ),
+          ),
+          // _buildNowPlaying(context)
+        ],
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: currentIndex,
+        onTap: onTap,
       ),
     );
   }

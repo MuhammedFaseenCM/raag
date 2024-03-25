@@ -42,20 +42,19 @@ class Favorite extends ChangeNotifier {
   }
 
   Future<void> getFavoriteSongs() async {
-    favoriteSongNotifier.value.clear();
-    for (var song in songsNotifier.value) {
-      if (isFavor(song)) {
-        favoriteSongNotifier.value.add(song);
-      }
-    }
+    final favoritesBox = Hive.box<int>('favorites');
+    final favoriteIds = favoritesBox.values.toSet();
+
+    final List<Song> favoriteSongs = songsNotifier.value
+        .where((song) => favoriteIds.contains(song.id))
+        .toList();
+
+    favoriteSongNotifier.value = favoriteSongs;
     favoriteSongNotifier.notifyListeners();
   }
 
   bool isFavor(Song song) {
     final favoritesBox = Hive.box<int>('favorites');
-    if (favoritesBox.values.contains(song.id)) {
-      return true;
-    }
-    return false;
+    return favoritesBox.values.contains(song.id);
   }
 }

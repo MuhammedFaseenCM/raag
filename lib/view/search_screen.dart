@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/listanable_build.dart';
 import 'package:raag/controllers/songs_controller.dart';
+import 'package:raag/model/debouncer.dart';
 import 'package:raag/model/song_model.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -15,6 +16,9 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   late OnAudioQuery audioQuery;
   bool hasPermission = false;
+  List<Song> searchedSongs = [];
+  TextEditingController searchController = TextEditingController();
+  final debouncer = Debouncer(milliseconds: 300);
 
   @override
   void initState() {
@@ -22,60 +26,82 @@ class _SearchScreenState extends State<SearchScreen> {
     audioQuery = OnAudioQuery();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 2),
-            const Text(
-              "Search",
-              style: TextStyle(
-                fontSize: 25,
-                color: Colors.blue,
-                fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 2),
+              const Text(
+                "Search",
+                style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            _buildTextField(),
-            const SizedBox(height: 4),
-            Text(
-              "All songs",
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.blue[700],
+              _buildTextField(),
+              const SizedBox(height: 4),
+              Text(
+                "All songs",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.blue[700],
+                ),
               ),
-            ),
-            if (widget.hasPermission)
-              ListenableWidget(valueListenable: songsNotifier)
-            else
-              const Center(
-                child: Text('Error fetching songs'),
-              ),
-          ],
+              if (widget.hasPermission)
+                ListenableWidget(
+                  valueListenable: songsNotifier,
+                  searchedSongs: searchedSongs,
+                  searchController: searchController,
+                )
+              else
+                const Center(
+                  child: Text('Error fetching songs'),
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  SizedBox _buildTextField() {
-    return SizedBox(
-      height: 50,
-      child: TextFormField(
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(borderSide: BorderSide.none),
-          filled: true,
-          fillColor: Colors.blueGrey[200],
-          hintText: 'What do you want to listen to ?',
-          hintStyle: TextStyle(color: Colors.grey[700]),
-          prefixIcon: const Icon(Icons.search),
-        ),
+  Widget _buildTextField() {
+    var textFormField = TextFormField(
+      controller: searchController,
+      onChanged: (value) {
+        if (value.trim().isEmpty) return;
+        debouncer.run(() {
+          searchedSongs.clear();
+          for (var song in songsNotifier.value) {
+            if (song.title.toLowerCase().contains(value.trim().toLowerCase())) {
+              searchedSongs.add(song);
+            }
+          }
+          setState(() {});
+        });
+      },
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(borderSide: BorderSide.none),
+        filled: true,
+        fillColor: Colors.blueGrey[200],
+        hintText: 'What do you want to listen to ?',
+        hintStyle: TextStyle(color: Colors.grey[700]),
+        prefixIcon: const Icon(Icons.search),
       ),
     );
+    return textFormField;
   }
 
   List<Song> changeSongModel(List<SongModel> songModel) {

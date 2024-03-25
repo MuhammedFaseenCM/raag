@@ -2,25 +2,41 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:raag/components/pop_up_menu.dart';
 import 'package:raag/components/query_art_work_widget.dart';
+import 'package:raag/components/theme.dart';
+import 'package:raag/controllers/recently_played_controller.dart';
 import 'package:raag/model/song_model.dart';
 import 'package:raag/view/song_play_screen.dart';
 
 class ListenableWidget extends StatelessWidget {
   final ValueListenable<List<Song>> valueListenable;
-  const ListenableWidget({super.key, required this.valueListenable});
+  final List<Song>? searchedSongs;
+  final TextEditingController? searchController;
+  const ListenableWidget({
+    super.key,
+    required this.valueListenable,
+    this.searchedSongs,
+    this.searchController,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: valueListenable,
       builder: (context, songs, _) {
-        if (songs.isEmpty) return const Center(child: Text('No Songs found'));
+        if (songs.isEmpty || isSearchEmpty) {
+          return const Center(child: Text('No Songs found'));
+        }
         return ListView.builder(
           shrinkWrap: true,
-          itemCount: songs.length,
+          itemCount: isSearching ? searchedSongs?.length ?? 0 : songs.length,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (_, index) {
-            Song song = songs[index];
+            final Song song;
+            if (isSearching) {
+              song = searchedSongs![index];
+            } else {
+              song = songs[index];
+            }
             return ListTile(
               onTap: () => Navigator.push(
                 context,
@@ -31,15 +47,44 @@ class ListenableWidget extends StatelessWidget {
               leading: QueryArtWork(songId: song.id),
               title: Text(
                 song.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppStyle.headline4.copyWith(
+                  color:
+                      valueListenable == recentlyPlayed ? Colors.white : null,
+                ),
               ),
               subtitle: Text(
                 song.album ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppStyle.bodyText1.copyWith(
+                  color:
+                      valueListenable == recentlyPlayed ? Colors.white : null,
+                ),
               ),
-              trailing: PopUp(song: songs[index]),
+              trailing: PopUp(
+                song: songs[index],
+                isRecent: valueListenable == recentlyPlayed,
+              ),
             );
           },
         );
       },
     );
+  }
+
+  bool get isSearching {
+    if (searchController == null || searchedSongs == null) {
+      return false;
+    }
+    return searchController!.text.isNotEmpty && searchedSongs!.isNotEmpty;
+  }
+
+  bool get isSearchEmpty {
+    if (searchController == null || searchedSongs == null) {
+      return false;
+    }
+    return searchController!.text.isNotEmpty && searchedSongs!.isEmpty;
   }
 }
