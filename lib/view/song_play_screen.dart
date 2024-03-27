@@ -24,7 +24,7 @@ class _PlaySongState extends State<PlaySong> {
   }
 
   Future<void> playSong() async {
-    duration = await player.initSong(widget.song.path);
+    duration = await player.initSong(widget.song);
     if (!player.isSameSong(widget.song.path)) player.playSong();
     await RecentlyPlayed.instance.addToRecentlyPlayed(widget.song);
     setState(() {});

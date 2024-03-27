@@ -1,4 +1,5 @@
 import 'package:just_audio/just_audio.dart';
+import 'package:raag/model/song_model.dart';
 
 class PlayController {
   static final PlayController instance = PlayController._internal();
@@ -9,19 +10,19 @@ class PlayController {
 
   AudioPlayer player = AudioPlayer();
   bool isPlaying = false;
-  String songPath = '';
+  Song? currentSong;
 
-  Future<Duration?> initSong(String path) async {
-    if (isSameSong(path)) {
+  Future<Duration?> initSong(Song song) async {
+    if (isSameSong(song.path)) {
       return player.duration;
     }
     await player.stop();
-    songPath = path;
-    return await player.setFilePath(path);
+    currentSong = song;
+    return await player.setFilePath(song.path);
   }
 
   bool isSameSong(String path) {
-    return songPath == path;
+    return currentSong?.path == path;
   }
 
   void playSong() {

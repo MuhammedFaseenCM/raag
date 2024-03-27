@@ -16,6 +16,7 @@ void main() async {
   await Hive.openBox<int>('favorites');
   await Hive.openBox<int>('recently_played');
   await Hive.openBox<Playlist>('playlist');
+  await Hive.openBox<int>('now_playing');
   runApp(const MyApp());
 }
 

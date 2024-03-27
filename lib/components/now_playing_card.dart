@@ -25,8 +25,8 @@ class NowPlayingCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              PlayController.instance.player.icyMetadata?.info?.title ?? '',
-              style: AppStyle.bodyText1.copyWith(
+              PlayController.instance.currentSong?.title ?? '',
+              style: AppStyle.headline5.copyWith(
                 color: AppColors.whiteColor,
               ),
             ),
@@ -36,6 +36,7 @@ class NowPlayingCard extends StatelessWidget {
              PlayController.instance.isPlaying?   Icons.pause : Icons.play_arrow,
                 color: AppColors.whiteColor
               ),
+            color: AppColors.whiteColor,
             ),
           ],
         ),
