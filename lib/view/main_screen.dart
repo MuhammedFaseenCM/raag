@@ -1,10 +1,9 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/bottom_nav_bar.dart';
 import 'package:raag/controllers/favorite_controller.dart';
+import 'package:raag/controllers/play_controller.dart';
 import 'package:raag/controllers/playlist_controller.dart';
 import 'package:raag/controllers/recently_played_controller.dart';
 import 'package:raag/controllers/songs_controller.dart';
@@ -128,5 +127,11 @@ class _MainScreenState extends State<MainScreen> {
       );
     }
     return songs;
+  }
+
+  @override
+  void dispose() {
+    PlayController.instance.player.dispose();
+    super.dispose();
   }
 }

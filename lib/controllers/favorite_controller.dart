@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:raag/controllers/songs_controller.dart';
 import 'package:raag/model/song_model.dart';
@@ -56,5 +56,21 @@ class Favorite extends ChangeNotifier {
   bool isFavor(Song song) {
     final favoritesBox = Hive.box<int>('favorites');
     return favoritesBox.values.contains(song.id);
+  }
+
+  Future<void> onFavoriteTap(BuildContext context, Song song) async {
+    if (favoriteSongNotifier.value.contains(song)) {
+      await Favorite.instance.deleteFromFavorites(song.id);
+    } else {
+      bool result = await Favorite.instance.addToFavorites(song);
+      if (!result && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Already in favorites'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+    }
   }
 }

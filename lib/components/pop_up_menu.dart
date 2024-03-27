@@ -32,19 +32,7 @@ class _PopUpState extends State<PopUp> {
         PopupMenuItem(
           value: 1,
           onTap: () async {
-            if (favoriteSongNotifier.value.contains(widget.song)) {
-              await Favorite.instance.deleteFromFavorites(widget.song.id);
-            } else {
-              bool result = await Favorite.instance.addToFavorites(widget.song);
-              if (!result) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Already in favorites'),
-                    duration: Duration(seconds: 1),
-                  ),
-                );
-              }
-            }
+            await Favorite.instance.onFavoriteTap(context, widget.song);
             setState(() {});
           },
           // row has two child icon and text.
@@ -63,14 +51,14 @@ class _PopUpState extends State<PopUp> {
         PopupMenuItem(
           value: 2,
           onTap: () async {
-            if (widget.isPlaylist) {
-              await PlaylistController.instance.deleteSongFromPlayList(
-                  widget.playListIndex ?? 0, widget.songIndex ?? 0);
-              setState(() {});
-            } else {
-              PlaylistController.instance
-                  .showPlaylistBottomSheet(context, widget.song);
-            }
+            await PlaylistController.instance.onPlaylistTap(
+              context,
+              widget.isPlaylist,
+              widget.playListIndex,
+              widget.songIndex,
+              widget.song,
+            );
+            setState(() {});
           },
           child: Row(
             children: [
@@ -85,7 +73,8 @@ class _PopUpState extends State<PopUp> {
       ],
       offset: const Offset(0, 50),
       elevation: 2,
-      iconColor: widget.isRecent ? AppColors.whiteColor : AppColors.primaryColor,
+      iconColor:
+          widget.isRecent ? AppColors.whiteColor : AppColors.primaryColor,
     );
   }
 

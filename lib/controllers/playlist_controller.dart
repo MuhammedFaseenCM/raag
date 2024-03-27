@@ -18,23 +18,21 @@ class PlaylistController extends ChangeNotifier {
   Future<void> createPlayList(Playlist playlist) async {
     final playListBox = Hive.box<Playlist>('playlist');
     await playListBox.add(playlist);
-    playlistNotifier.value.clear();
-    playlistNotifier.value.addAll(playListBox.values.toList());
+    playlistNotifier.value = playListBox.values.toList();
     playlistNotifier.notifyListeners();
   }
 
   Future<void> deletePlayList(int index) async {
     final playListBox = Hive.box<Playlist>('playlist');
     await playListBox.deleteAt(index);
-    playlistNotifier.value.clear();
-    playlistNotifier.value.addAll(playListBox.values.toList());
+    playlistNotifier.value = playListBox.values.toList();
     playlistNotifier.notifyListeners();
   }
 
   Future<void> getPlayList() async {
     final playListBox = Hive.box<Playlist>('playlist');
     playlistNotifier.value.clear();
-    playlistNotifier.value.addAll(playListBox.values.toList());
+    playlistNotifier.value = playListBox.values.toList();
     playlistNotifier.notifyListeners();
   }
 
@@ -43,8 +41,7 @@ class PlaylistController extends ChangeNotifier {
     final playlist = playListBox.getAt(index);
     playlist!.songs.add(song);
     await playListBox.putAt(index, playlist);
-    playlistNotifier.value.clear();
-    playlistNotifier.value.addAll(playListBox.values.toList());
+    playlistNotifier.value = playListBox.values.toList();
     playlistNotifier.notifyListeners();
   }
 
@@ -53,8 +50,7 @@ class PlaylistController extends ChangeNotifier {
     final playlist = playListBox.getAt(index);
     playlist!.songs.removeAt(songIndex);
     await playListBox.putAt(index, playlist);
-    playlistNotifier.value.clear();
-    playlistNotifier.value.addAll(playListBox.values.toList());
+    playlistNotifier.value = playListBox.values.toList();
     playlistNotifier.notifyListeners();
   }
 
@@ -63,16 +59,14 @@ class PlaylistController extends ChangeNotifier {
     final playlist = playListBox.getAt(index);
     playlist!.songs.clear();
     await playListBox.putAt(index, playlist);
-    playlistNotifier.value.clear();
-    playlistNotifier.value.addAll(playListBox.values.toList());
+    playlistNotifier.value = playListBox.values.toList();
     playlistNotifier.notifyListeners();
   }
 
   Future<void> editPlayList(int index, Playlist playlist) async {
     final playListBox = Hive.box<Playlist>('playlist');
     await playListBox.putAt(index, playlist);
-    playlistNotifier.value.clear();
-    playlistNotifier.value.addAll(playListBox.values.toList());
+    playlistNotifier.value = playListBox.values.toList();
     playlistNotifier.notifyListeners();
   }
 
@@ -85,11 +79,11 @@ class PlaylistController extends ChangeNotifier {
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: Text(isEdit ? "Edit play list" : "Add new play list"),
+          title: Text(isEdit ? "Edit playlist" : "Add new playlist"),
           content: TextFormField(
             controller: playListController,
             decoration: const InputDecoration(
-              labelText: "Play list name",
+              labelText: "playlist name",
               border: OutlineInputBorder(),
             ),
           ),
@@ -118,7 +112,7 @@ class PlaylistController extends ChangeNotifier {
                   }
                   playListController.clear();
 
-                  Navigator.pop(context);
+                  if (context.mounted) Navigator.pop(context);
                 },
                 child: const Text("Confirm"))
           ],
@@ -133,7 +127,7 @@ class PlaylistController extends ChangeNotifier {
       builder: (_) {
         return ValueListenableBuilder(
           valueListenable: playlistNotifier,
-          builder: (context, playlist, child) {
+          builder: (context, playlists, child) {
             return SizedBox(
               height: MediaQuery.sizeOf(context).height * 0.8,
               child: Padding(
@@ -143,11 +137,11 @@ class PlaylistController extends ChangeNotifier {
                     const Text("Add song to playlist"),
                     ListView.builder(
                       shrinkWrap: true,
-                      itemCount: playlist.length,
+                      itemCount: playlists.length,
                       itemBuilder: (context, index) {
-                        final Playlist playList = playlist[index];
+                        final Playlist playlist = playlists[index];
                         return ListTile(
-                          title: Text(playList.name),
+                          title: Text(playlist.name),
                           onTap: () {
                             addSongToPlayList(index, song);
                             Navigator.pop(context);
@@ -170,5 +164,20 @@ class PlaylistController extends ChangeNotifier {
         );
       },
     );
+  }
+
+  Future<void> onPlaylistTap(
+    BuildContext context,
+    bool isPlaylist,
+    int? playlistIndex,
+    int? songIndex,
+    Song song,
+  ) async {
+    if (isPlaylist) {
+      await PlaylistController.instance
+          .deleteSongFromPlayList(playlistIndex ?? 0, songIndex ?? 0);
+    } else {
+      PlaylistController.instance.showPlaylistBottomSheet(context, song);
+    }
   }
 }
