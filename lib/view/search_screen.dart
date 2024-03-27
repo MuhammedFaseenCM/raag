@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:raag/components/colors.dart';
 import 'package:raag/components/listanable_build.dart';
 import 'package:raag/controllers/songs_controller.dart';
 import 'package:raag/model/debouncer.dart';
@@ -47,7 +48,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 "Search",
                 style: TextStyle(
                   fontSize: 25,
-                  color: Colors.blue,
+                  color: AppColors.primaryColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -82,15 +83,19 @@ class _SearchScreenState extends State<SearchScreen> {
       controller: searchController,
       onChanged: (value) {
         if (value.trim().isEmpty) return;
-        debouncer.run(() {
-          searchedSongs.clear();
-          for (var song in songsNotifier.value) {
-            if (song.title.toLowerCase().contains(value.trim().toLowerCase())) {
-              searchedSongs.add(song);
+        debouncer.run(
+          () {
+            searchedSongs.clear();
+            for (var song in songsNotifier.value) {
+              if (song.title
+                  .toLowerCase()
+                  .contains(value.trim().toLowerCase())) {
+                searchedSongs.add(song);
+              }
             }
-          }
-          setState(() {});
-        });
+            setState(() {});
+          },
+        );
       },
       decoration: InputDecoration(
         border: const OutlineInputBorder(borderSide: BorderSide.none),
@@ -115,41 +120,5 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         )
         .toList();
-  }
-}
-
-class ListItems extends StatelessWidget {
-  const ListItems({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: ListView(
-        padding: const EdgeInsets.all(8),
-        children: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              height: 50,
-              color: Colors.amber[100],
-              child: const Center(child: Text('Entry A')),
-            ),
-          ),
-          const Divider(),
-          Container(
-            height: 50,
-            color: Colors.amber[200],
-            child: const Center(child: Text('Entry B')),
-          ),
-          const Divider(),
-          Container(
-            height: 50,
-            color: Colors.amber[300],
-            child: const Center(child: Text('Entry C')),
-          ),
-        ],
-      ),
-    );
   }
 }

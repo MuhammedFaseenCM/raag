@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raag/components/colors.dart';
 import 'package:raag/controllers/playlist_controller.dart';
 
 class PlayListPopUp extends StatefulWidget {
@@ -16,7 +17,7 @@ class _PlayListPopUpState extends State<PlayListPopUp> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
-      iconColor: Colors.white,
+      iconColor: AppColors.whiteColor,
       itemBuilder: (_) => [
         // popupmenu item 1
         PopupMenuItem(
@@ -37,7 +38,7 @@ class _PlayListPopUpState extends State<PlayListPopUp> {
             children: [
               Icon(
                 Icons.edit_note_sharp,
-                color: Colors.lightBlue,
+                color: AppColors.lightPrimaryColor,
               ),
               SizedBox(width: 10),
               Text("Edit")

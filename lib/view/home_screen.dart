@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raag/components/colors.dart';
 import 'package:raag/components/listanable_build.dart';
 import 'package:raag/components/query_art_work_widget.dart';
 import 'package:raag/controllers/recently_played_controller.dart';
@@ -24,10 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       width: MediaQuery.sizeOf(context).width,
       decoration: const BoxDecoration(
-          gradient: LinearGradient(colors: [
-        Colors.blueGrey,
-        Colors.blue,
-      ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        gradient: AppColors.primaryGradient,
+      ),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -39,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                 ),
               ),
               const SizedBox(height: 2),
@@ -47,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Today's Shuffled song for you",
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                 ),
               ),
               const SizedBox(height: 12),
@@ -75,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Your Playlist",
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -104,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Frequently played',
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -134,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Recently played",
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                   fontStyle: FontStyle.italic,
                 ),
               ),

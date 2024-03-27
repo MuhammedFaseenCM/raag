@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raag/components/colors.dart';
 import 'package:raag/controllers/favorite_controller.dart';
 import 'package:raag/controllers/playlist_controller.dart';
 import 'package:raag/model/song_model.dart';
@@ -51,7 +52,7 @@ class _PopUpState extends State<PopUp> {
             children: [
               Icon(
                 isFavSong(widget.song) ? Icons.favorite_border : Icons.favorite,
-                color: Colors.lightBlue,
+                color: AppColors.lightPrimaryColor,
               ),
               const SizedBox(width: 10),
               Text(isFavSong(widget.song) ? "Unlike" : "Like")
@@ -84,7 +85,7 @@ class _PopUpState extends State<PopUp> {
       ],
       offset: const Offset(0, 50),
       elevation: 2,
-      iconColor: widget.isRecent ? Colors.white : Colors.blue,
+      iconColor: widget.isRecent ? AppColors.whiteColor : AppColors.primaryColor,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:raag/components/colors.dart';
 import 'package:raag/components/listanable_build.dart';
 import 'package:raag/controllers/favorite_controller.dart';
 
@@ -26,7 +27,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         child: Column(
           children: [
             _buildFavTop(context),
-           ListenableWidget(valueListenable: favoriteSongNotifier),
+            ListenableWidget(valueListenable: favoriteSongNotifier),
           ],
         ),
       ),
@@ -37,16 +38,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     return Container(
       width: MediaQuery.sizeOf(context).width,
       height: 250.0,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.blueGrey,
-            Colors.blue,
-          ],
-        ),
-      ),
+      decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
       child: _buildCenterUi(),
     );
   }
@@ -61,26 +53,19 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             width: 140.0,
             height: 140.0,
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  Colors.blueGrey,
-                  Colors.blue,
-                ],
-              ),
+              gradient: AppColors.primaryGradient,
             ),
             child: const Icon(
               Icons.favorite,
               size: 70,
-              color: Colors.white,
+              color: AppColors.whiteColor,
             ),
           ),
           const SizedBox(height: 10.0),
           const Text(
             "Favourite Songs",
             style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                color: AppColors.whiteColor, fontWeight: FontWeight.bold, fontSize: 18),
           )
         ],
       ),

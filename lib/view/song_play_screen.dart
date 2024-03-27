@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:raag/components/colors.dart';
 import 'package:raag/controllers/recently_played_controller.dart';
 import 'package:raag/model/song_model.dart';
 
@@ -39,12 +40,10 @@ class _PlaySongState extends State<PlaySong> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          gradient: LinearGradient(colors: [
-        Colors.blueGrey,
-        Colors.blue,
-      ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        gradient: AppColors.primaryGradient,
+      ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparentColor,
         appBar: _buildAppBar(),
         body: SingleChildScrollView(
           child: Padding(
@@ -59,15 +58,15 @@ class _PlaySongState extends State<PlaySong> {
                   widget.song.title,
                   style: const TextStyle(
                     fontSize: 20,
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  widget.song.album??'',
+                  widget.song.album ?? '',
                   style: const TextStyle(
                     fontSize: 15,
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -92,11 +91,11 @@ class _PlaySongState extends State<PlaySong> {
             children: [
               Text(
                 format(player.position),
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: AppColors.whiteColor),
               ),
               Text(
                 format(player.duration ?? Duration.zero),
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: AppColors.whiteColor),
               ),
             ],
           );
@@ -105,16 +104,16 @@ class _PlaySongState extends State<PlaySong> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparentColor,
       title: const Text(
         "Playing from your Library",
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: AppColors.whiteColor),
       ),
-      leading: const BackButton(color: Colors.white),
+      leading: const BackButton(color: AppColors.whiteColor),
       actions: [
         IconButton(
             onPressed: () {},
-            color: Colors.white,
+            color: AppColors.whiteColor,
             icon: const Icon(Icons.more_vert))
       ],
     );
@@ -155,7 +154,7 @@ class _PlaySongState extends State<PlaySong> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             iconSize: 55,
             onPressed: () {
               if (player.position.inSeconds.toInt() > 10) {
@@ -166,7 +165,7 @@ class _PlaySongState extends State<PlaySong> {
             },
             icon: const Icon(Icons.fast_rewind)),
         IconButton(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             iconSize: 55,
             onPressed: () {
               if (player.playing) {
@@ -182,7 +181,7 @@ class _PlaySongState extends State<PlaySong> {
                   : Icons.play_circle_filled_rounded,
             )),
         IconButton(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             onPressed: () {
               player.seek(player.position + const Duration(seconds: 10));
             },
