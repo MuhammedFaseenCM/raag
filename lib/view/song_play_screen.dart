@@ -24,8 +24,8 @@ class _PlaySongState extends State<PlaySong> {
   }
 
   Future<void> playSong() async {
-    duration = await PlayController.instance.initSong(widget.song.path);
-    player.playSong();
+    duration = await player.initSong(widget.song.path);
+    if (!player.isSameSong(widget.song.path)) player.playSong();
     await RecentlyPlayed.instance.addToRecentlyPlayed(widget.song);
     setState(() {});
   }
@@ -190,7 +190,7 @@ class _PlaySongState extends State<PlaySong> {
     );
   }
 
- String format(Duration d) {
+  String format(Duration d) {
     if (d.inHours > 0) {
       return d.toString().split('.').first.padLeft(8, "0");
     }

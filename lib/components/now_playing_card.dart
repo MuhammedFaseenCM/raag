@@ -32,8 +32,9 @@ class NowPlayingCard extends StatelessWidget {
             ),
             IconButton(
               onPressed: PlayController.instance.playSong,
-              icon: const Icon(
-                Icons.play_arrow,
+              icon:  Icon(
+             PlayController.instance.isPlaying?   Icons.pause : Icons.play_arrow,
+                color: AppColors.whiteColor
               ),
             ),
           ],

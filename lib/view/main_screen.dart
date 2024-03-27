@@ -76,7 +76,8 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-          const NowPlayingCard(),
+          if (PlayController.instance.player.duration != null)
+            const NowPlayingCard(),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
