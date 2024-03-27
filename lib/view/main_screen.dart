@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/bottom_nav_bar.dart';
+import 'package:raag/components/now_playing_card.dart';
 import 'package:raag/controllers/favorite_controller.dart';
 import 'package:raag/controllers/play_controller.dart';
 import 'package:raag/controllers/playlist_controller.dart';
@@ -75,35 +76,12 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-          // _buildNowPlaying(context)
+          const NowPlayingCard(),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: currentIndex,
         onTap: onTap,
-      ),
-    );
-  }
-
-  Positioned buildNowPlaying(BuildContext context) {
-    return Positioned(
-      bottom: 0.0,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        width: MediaQuery.sizeOf(context).width,
-        height: 50.0,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12.0), topRight: Radius.circular(12.0)),
-          color: Colors.blue[800],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Tum jo aye"),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.play_arrow))
-          ],
-        ),
       ),
     );
   }

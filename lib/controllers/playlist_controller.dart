@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:raag/components/add_playlist_dialog.dart';
+import 'package:raag/components/playlist_bottom_sheet.dart';
 import 'package:raag/model/song_model.dart';
 
 ValueNotifier<List<Playlist>> playlistNotifier = ValueNotifier([]);
@@ -70,52 +72,20 @@ class PlaylistController extends ChangeNotifier {
     playlistNotifier.notifyListeners();
   }
 
-  Future<void> setPlayListName(
-      {required BuildContext context,
-      bool isEdit = false,
-      int? index,
-      Playlist? playlist}) async {
+  Future<void> setPlayListName({
+    required BuildContext context,
+    bool isEdit = false,
+    int? index,
+    Playlist? playlist,
+  }) async {
     showAdaptiveDialog(
       context: context,
       builder: (_) {
-        return AlertDialog(
-          title: Text(isEdit ? "Edit playlist" : "Add new playlist"),
-          content: TextFormField(
-            controller: playListController,
-            decoration: const InputDecoration(
-              labelText: "playlist name",
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  playListController.clear();
-                  Navigator.pop(context);
-                },
-                child: const Text("Cancel")),
-            TextButton(
-                onPressed: () async {
-                  if (isEdit) {
-                    await PlaylistController.instance.editPlayList(
-                        index!,
-                        playlist!.copyWith(
-                          name: playListController.text.trim(),
-                        ));
-                  } else {
-                    await PlaylistController.instance.createPlayList(
-                      Playlist(
-                        name: playListController.text.trim(),
-                        songs: [],
-                      ),
-                    );
-                  }
-                  playListController.clear();
-
-                  if (context.mounted) Navigator.pop(context);
-                },
-                child: const Text("Confirm"))
-          ],
+        return PlaylistDailog(
+          isEdit: isEdit,
+          controller: playListController,
+          index: index,
+          playlist: playlist,
         );
       },
     );
@@ -125,43 +95,7 @@ class PlaylistController extends ChangeNotifier {
     showModalBottomSheet(
       context: context,
       builder: (_) {
-        return ValueListenableBuilder(
-          valueListenable: playlistNotifier,
-          builder: (context, playlists, child) {
-            return SizedBox(
-              height: MediaQuery.sizeOf(context).height * 0.8,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Text("Add song to playlist"),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: playlists.length,
-                      itemBuilder: (context, index) {
-                        final Playlist playlist = playlists[index];
-                        return ListTile(
-                          title: Text(playlist.name),
-                          onTap: () {
-                            addSongToPlayList(index, song);
-                            Navigator.pop(context);
-                          },
-                          leading: const Icon(Icons.playlist_add),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              PlaylistController.instance.deletePlayList(index);
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
+        return PlaylistBottomSheet(song: song);
       },
     );
   }
