@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:raag/components/colors.dart';
 import 'package:raag/components/pop_up_menu.dart';
 import 'package:raag/components/query_art_work_widget.dart';
 import 'package:raag/components/theme.dart';
@@ -51,7 +52,7 @@ class ListenableWidget extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: AppStyle.headline4.copyWith(
                   color:
-                      valueListenable == recentlyPlayed ? Colors.white : null,
+                      valueListenable == recentlyPlayed ? AppColors.whiteColor : null,
                 ),
               ),
               subtitle: Text(
@@ -60,7 +61,7 @@ class ListenableWidget extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: AppStyle.bodyText1.copyWith(
                   color:
-                      valueListenable == recentlyPlayed ? Colors.white : null,
+                      valueListenable == recentlyPlayed ? AppColors.whiteColor : null,
                 ),
               ),
               trailing: PopUp(

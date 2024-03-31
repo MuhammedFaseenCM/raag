@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:raag/components/colors.dart';
+import 'package:raag/controllers/play_controller.dart';
 import 'package:raag/controllers/recently_played_controller.dart';
 import 'package:raag/model/song_model.dart';
 
@@ -13,8 +14,8 @@ class PlaySong extends StatefulWidget {
 }
 
 class _PlaySongState extends State<PlaySong> {
-  final player = AudioPlayer();
   Duration? duration;
+  PlayController player = PlayController.instance;
 
   @override
   void initState() {
@@ -23,15 +24,14 @@ class _PlaySongState extends State<PlaySong> {
   }
 
   Future<void> playSong() async {
-    duration = await player.setFilePath(widget.song.path);
-    player.play();
+    duration = await player.initSong(widget.song);
+    if (!player.isSameSong(widget.song.path)) player.playSong();
     await RecentlyPlayed.instance.addToRecentlyPlayed(widget.song);
     setState(() {});
   }
 
   @override
   void dispose() {
-    player.dispose();
     super.dispose();
   }
 
@@ -39,12 +39,10 @@ class _PlaySongState extends State<PlaySong> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          gradient: LinearGradient(colors: [
-        Colors.blueGrey,
-        Colors.blue,
-      ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        gradient: AppColors.primaryGradient,
+      ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparentColor,
         appBar: _buildAppBar(),
         body: SingleChildScrollView(
           child: Padding(
@@ -59,15 +57,15 @@ class _PlaySongState extends State<PlaySong> {
                   widget.song.title,
                   style: const TextStyle(
                     fontSize: 20,
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  widget.song.album??'',
+                  widget.song.album ?? '',
                   style: const TextStyle(
                     fontSize: 15,
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -85,36 +83,37 @@ class _PlaySongState extends State<PlaySong> {
 
   StreamBuilder<Duration> _buildPositionText() {
     return StreamBuilder<Duration>(
-        stream: player.positionStream,
-        builder: (_, snapshot) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                format(player.position),
-                style: const TextStyle(color: Colors.white),
-              ),
-              Text(
-                format(player.duration ?? Duration.zero),
-                style: const TextStyle(color: Colors.white),
-              ),
-            ],
-          );
-        });
+      stream: player.player.positionStream,
+      builder: (_, snapshot) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              format(player.player.position),
+              style: const TextStyle(color: AppColors.whiteColor),
+            ),
+            Text(
+              format(player.player.duration ?? Duration.zero),
+              style: const TextStyle(color: AppColors.whiteColor),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparentColor,
       title: const Text(
         "Playing from your Library",
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: AppColors.whiteColor),
       ),
-      leading: const BackButton(color: Colors.white),
+      leading: const BackButton(color: AppColors.whiteColor),
       actions: [
         IconButton(
             onPressed: () {},
-            color: Colors.white,
+            color: AppColors.whiteColor,
             icon: const Icon(Icons.more_vert))
       ],
     );
@@ -135,14 +134,14 @@ class _PlaySongState extends State<PlaySong> {
 
   StreamBuilder<Duration> _buildSongSlider() {
     return StreamBuilder(
-        stream: player.positionStream,
+        stream: player.player.positionStream,
         builder: (context, _) {
           return Slider(
             min: 0.0,
-            max: player.duration?.inSeconds.toDouble() ?? 1.0,
-            value: player.position.inSeconds.toDouble(),
+            max: player.player.duration?.inSeconds.toDouble() ?? 1.0,
+            value: player.player.position.inSeconds.toDouble(),
             onChanged: (value) {
-              player.seek(Duration(seconds: value.round()));
+              player.player.seek(Duration(seconds: value.round()));
               //   setState(() {});
             },
             autofocus: true,
@@ -155,47 +154,43 @@ class _PlaySongState extends State<PlaySong> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             iconSize: 55,
             onPressed: () {
-              if (player.position.inSeconds.toInt() > 10) {
-                player.seek(player.position - const Duration(seconds: 10));
+              if (player.player.position.inSeconds.toInt() > 10) {
+                player.player
+                    .seek(player.player.position - const Duration(seconds: 10));
               } else {
-                player.seek(Duration.zero);
+                player.player.seek(Duration.zero);
               }
             },
             icon: const Icon(Icons.fast_rewind)),
         IconButton(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             iconSize: 55,
-            onPressed: () {
-              if (player.playing) {
-                player.pause();
-              } else {
-                player.play();
-              }
-              setState(() {});
-            },
+            onPressed: player.playSong,
             icon: Icon(
-              player.playing
+              player.player.playing
                   ? Icons.pause_circle_filled
                   : Icons.play_circle_filled_rounded,
             )),
         IconButton(
-            color: Colors.white,
-            onPressed: () {
-              player.seek(player.position + const Duration(seconds: 10));
-            },
-            iconSize: 55,
-            icon: const Icon(
-              Icons.fast_forward,
-              size: 55,
-            ))
+          color: AppColors.whiteColor,
+          onPressed: () {
+            player.player
+                .seek(player.player.position + const Duration(seconds: 10));
+          },
+          iconSize: 55,
+          icon: const Icon(
+            Icons.fast_forward,
+            size: 55,
+          ),
+        ),
       ],
     );
   }
 
-  format(Duration d) {
+  String format(Duration d) {
     if (d.inHours > 0) {
       return d.toString().split('.').first.padLeft(8, "0");
     }

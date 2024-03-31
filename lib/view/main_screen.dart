@@ -1,10 +1,11 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/bottom_nav_bar.dart';
+import 'package:raag/components/now_playing_card.dart';
 import 'package:raag/controllers/favorite_controller.dart';
+import 'package:raag/controllers/now_playing_controller.dart';
+import 'package:raag/controllers/play_controller.dart';
 import 'package:raag/controllers/playlist_controller.dart';
 import 'package:raag/controllers/recently_played_controller.dart';
 import 'package:raag/controllers/songs_controller.dart';
@@ -35,31 +36,6 @@ class _MainScreenState extends State<MainScreen> {
     fetchSongs();
   }
 
-  Future<void> fetchSongs({bool retry = false}) async {
-    hasPermission = await audioQuery.checkAndRequest(
-      retryRequest: retry,
-    );
-    if (hasPermission) {
-      List<SongModel> songModel = await audioQuery.querySongs(
-        sortType: null,
-        orderType: OrderType.ASC_OR_SMALLER,
-        uriType: UriType.EXTERNAL,
-        ignoreCase: true,
-      );
-      await SongsController.instance.addSongsToHive(
-        changeSongModel(songModel),
-      );
-      await Favorite.instance.getFavoriteSongs();
-      await PlaylistController.instance.getPlayList();
-      await RecentlyPlayed.instance.getRecentSongs();
-      Random random = Random();
-      int randomIndex = random.nextInt(songsNotifier.value.length);
-      shuffleSong = songsNotifier.value[randomIndex];
-    }
-
-    hasPermission ? setState(() {}) : null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,35 +52,13 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-          // _buildNowPlaying(context)
+          if (PlayController.instance.currentSong != null)
+            const NowPlayingCard(),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: currentIndex,
         onTap: onTap,
-      ),
-    );
-  }
-
-  Positioned buildNowPlaying(BuildContext context) {
-    return Positioned(
-      bottom: 0.0,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        width: MediaQuery.sizeOf(context).width,
-        height: 50.0,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12.0), topRight: Radius.circular(12.0)),
-          color: Colors.blue[800],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Tum jo aye"),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.play_arrow))
-          ],
-        ),
       ),
     );
   }
@@ -128,5 +82,38 @@ class _MainScreenState extends State<MainScreen> {
       );
     }
     return songs;
+  }
+
+  Future<void> fetchSongs({bool retry = false}) async {
+    hasPermission = await audioQuery.checkAndRequest(
+      retryRequest: retry,
+    );
+    if (hasPermission) {
+      List<SongModel> songModel = await audioQuery.querySongs(
+        sortType: null,
+        orderType: OrderType.ASC_OR_SMALLER,
+        uriType: UriType.EXTERNAL,
+        ignoreCase: true,
+      );
+      await SongsController.instance.addSongsToHive(
+        changeSongModel(songModel),
+      );
+      await Favorite.instance.getFavoriteSongs();
+      await PlaylistController.instance.getPlayList();
+      await RecentlyPlayed.instance.getRecentSongs();
+      PlayController.instance.currentSong =
+          await NowPlayingController.instance.getNowPlayingSong();
+      Random random = Random();
+      int randomIndex = random.nextInt(songsNotifier.value.length);
+      shuffleSong = songsNotifier.value[randomIndex];
+    }
+
+    hasPermission ? setState(() {}) : null;
+  }
+  
+  @override
+  void dispose() {
+    PlayController.instance.player.dispose();
+    super.dispose();
   }
 }

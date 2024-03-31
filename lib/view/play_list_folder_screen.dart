@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raag/components/colors.dart';
 import 'package:raag/components/pop_up_menu.dart';
 import 'package:raag/components/query_art_work_widget.dart';
 import 'package:raag/components/theme.dart';
@@ -22,11 +23,11 @@ class PlaylistFolderScreen extends StatelessWidget {
             onTap: () => Navigator.pop(context),
             child: const Icon(
               Icons.arrow_back_ios_new,
-              color: Colors.blue,
+              color: AppColors.primaryColor,
             )),
         title: Text(
           playlist.name,
-          style: AppStyle.headline2.copyWith(color: Colors.blue),
+          style: AppStyle.headline2,
         ),
         centerTitle: true,
       ),
@@ -57,11 +58,11 @@ class PlaylistFolderScreen extends StatelessWidget {
                   leading: QueryArtWork(songId: song.id),
                   title: Text(
                     song.title,
-                    style: AppStyle.headline4.copyWith(color: Colors.blue),
+                    style: AppStyle.headline4,
                   ),
                   subtitle: Text(
                     song.album!,
-                    style: AppStyle.bodyText1.copyWith(color: Colors.blue),
+                    style: AppStyle.bodyText1,
                   ),
                   trailing: PopUp(
                     song: song,

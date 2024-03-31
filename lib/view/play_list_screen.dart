@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raag/components/colors.dart';
 import 'package:raag/components/playlist_popup.dart';
 import 'package:raag/components/theme.dart';
 import 'package:raag/controllers/playlist_controller.dart';
@@ -69,16 +70,9 @@ class _PlayListScreenState extends State<PlayListScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                        gradient: const LinearGradient(
-                          colors: [
-                            Colors.blueGrey,
-                            Colors.blueGrey,
-                            Colors.blue,
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        )),
+                      borderRadius: BorderRadius.circular(16.0),
+                      gradient: AppColors.primaryGradient,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +82,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
                           child: Text(
                             playlist[index].name,
                             style: AppStyle.headline4
-                                .copyWith(color: Colors.white),
+                                .copyWith(color: AppColors.whiteColor),
                           ),
                         ),
                         PlayListPopUp(
