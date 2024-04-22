@@ -24,16 +24,20 @@ class _PlaySongState extends State<PlaySong> {
   Duration? duration;
   PlayController player = PlayController.instance;
 
+  int currentSongIndex = 0;
+  Song get currentSong => widget.songList[currentSongIndex];
+
   @override
   void initState() {
+    currentSongIndex = widget.index;
     playSong();
     super.initState();
   }
 
   Future<void> playSong() async {
-    duration = await player.initSong(widget.song);
-    if (!player.isSameSong(widget.song.path)) player.playSong();
-    await RecentlyPlayed.instance.addToRecentlyPlayed(widget.song);
+    duration = await player.initSong(currentSong);
+    if (!player.isSameSong(currentSong.path)) player.playSong();
+    await RecentlyPlayed.instance.addToRecentlyPlayed(currentSong);
     setState(() {});
   }
 
@@ -61,7 +65,7 @@ class _PlaySongState extends State<PlaySong> {
                 _buildAlbumImage(),
                 const SizedBox(height: 20),
                 Text(
-                  widget.song.title,
+                  currentSong.title,
                   style: const TextStyle(
                     fontSize: 20,
                     color: AppColors.whiteColor,
@@ -69,7 +73,7 @@ class _PlaySongState extends State<PlaySong> {
                   ),
                 ),
                 Text(
-                  widget.song.album ?? '',
+                  currentSong.album ?? '',
                   style: const TextStyle(
                     fontSize: 15,
                     color: AppColors.whiteColor,
@@ -131,7 +135,7 @@ class _PlaySongState extends State<PlaySong> {
         child: QueryArtworkWidget(
       artworkHeight: 250,
       artworkWidth: 320,
-      id: widget.song.id,
+      id: currentSong.id,
       type: ArtworkType.AUDIO,
       quality: 100,
       artworkFit: BoxFit.fitHeight,
@@ -161,17 +165,33 @@ class _PlaySongState extends State<PlaySong> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-            color: AppColors.whiteColor,
-            iconSize: 55,
-            onPressed: () {
-              if (player.player.position.inSeconds.toInt() > 10) {
-                player.player
-                    .seek(player.player.position - const Duration(seconds: 10));
-              } else {
-                player.player.seek(Duration.zero);
-              }
-            },
-            icon: const Icon(Icons.fast_rewind)),
+          color: AppColors.whiteColor,
+          iconSize: 55,
+          onPressed: () {
+            currentSongIndex > 0
+                ? currentSongIndex--
+                : currentSongIndex = widget.songList.length - 1;
+            playSong();
+          },
+          icon: const Icon(
+            Icons.skip_previous,
+          ),
+        ),
+        IconButton(
+          color: AppColors.whiteColor,
+          iconSize: 55,
+          onPressed: () {
+            if (player.player.position.inSeconds.toInt() > 10) {
+              player.player
+                  .seek(player.player.position - const Duration(seconds: 10));
+            } else {
+              player.player.seek(Duration.zero);
+            }
+          },
+          icon: const Icon(
+            Icons.fast_rewind,
+          ),
+        ),
         IconButton(
             color: AppColors.whiteColor,
             iconSize: 55,
@@ -191,6 +211,19 @@ class _PlaySongState extends State<PlaySong> {
           icon: const Icon(
             Icons.fast_forward,
             size: 55,
+          ),
+        ),
+        IconButton(
+          color: AppColors.whiteColor,
+          iconSize: 55,
+          onPressed: () {
+            currentSongIndex == widget.songList.length - 1
+                ? currentSongIndex = 0
+                : currentSongIndex++;
+            playSong();
+          },
+          icon: const Icon(
+            Icons.skip_next,
           ),
         ),
       ],
