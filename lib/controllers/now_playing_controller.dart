@@ -14,7 +14,7 @@ class NowPlayingController {
 
   NowPlayingController._internal();
 
-  final nowPlayingBox = Hive.box('now_playing');
+  final nowPlayingBox = Hive.box<int>('now_playing');
 
   Future<void> nowPlayingSong(int songId)async{
     await nowPlayingBox.put('now_playing', songId);
@@ -22,7 +22,10 @@ class NowPlayingController {
   }
 
   Future<Song?> getNowPlayingSong()async{
-    int songId = nowPlayingBox.get('now_playing');
+    int? songId = nowPlayingBox.get('now_playing');
+    if(songId == null){
+      return null;
+    }
     for (var song in songsNotifier.value) {
       if (song.id == songId) {
         return song;

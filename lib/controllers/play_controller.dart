@@ -14,6 +14,7 @@ class PlayController {
 
   Future<Duration?> initSong(Song song) async {
     if (isSameSong(song.path)) {
+      if (!player.playing) player.play();
       return player.duration;
     }
     await player.stop();
