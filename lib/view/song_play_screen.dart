@@ -25,16 +25,20 @@ class _PlaySongState extends State<PlaySong> {
   PlayController player = PlayController.instance;
 
   int currentSongIndex = 0;
-  Song get currentSong => widget.songList[currentSongIndex];
+  Song get currentSong => _currentSong!;
+
+  Song? _currentSong;
 
   @override
   void initState() {
     currentSongIndex = widget.index;
+    _currentSong = widget.song;
     playSong();
     super.initState();
   }
 
-  Future<void> playSong() async {
+  Future<void> playSong([bool isInit =false]) async {
+    isInit? _currentSong = widget.song: _currentSong = widget.songList[currentSongIndex];
     duration = await player.initSong(currentSong);
     if (!player.isSameSong(currentSong.path)) player.playSong();
     await RecentlyPlayed.instance.addToRecentlyPlayed(currentSong);
