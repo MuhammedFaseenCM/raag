@@ -5,6 +5,7 @@ import 'package:raag/components/query_art_work_widget.dart';
 import 'package:raag/components/theme.dart';
 import 'package:raag/controllers/playlist_controller.dart';
 import 'package:raag/model/song_model.dart';
+import 'package:raag/view/song_play_screen.dart';
 
 class PlaylistFolderScreen extends StatelessWidget {
   final Playlist playlist;
@@ -55,6 +56,19 @@ class PlaylistFolderScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final Song song = playlist.songs[index];
                 return ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaySong(
+                          song: song,
+                          index: index,
+                          songList: playlist.songs,
+                        ),
+                      ),
+                    );
+                  
+                  },
                   leading: QueryArtWork(songId: song.id),
                   title: Text(
                     song.title,

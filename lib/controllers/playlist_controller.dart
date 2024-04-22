@@ -81,7 +81,7 @@ class PlaylistController extends ChangeNotifier {
     showAdaptiveDialog(
       context: context,
       builder: (_) {
-        return PlaylistDailog(
+        return PlaylistDialog(
           isEdit: isEdit,
           controller: playListController,
           index: index,

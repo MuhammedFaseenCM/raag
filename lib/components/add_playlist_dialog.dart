@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:raag/controllers/playlist_controller.dart';
 import 'package:raag/model/song_model.dart';
 
-class PlaylistDailog extends StatelessWidget {
+class PlaylistDialog extends StatelessWidget {
   final bool isEdit;
   final Playlist? playlist;
   final TextEditingController controller;
   final int? index;
-  const PlaylistDailog({
+  const PlaylistDialog({
     super.key,
     required this.isEdit,
     this.playlist,
@@ -35,20 +35,19 @@ class PlaylistDailog extends StatelessWidget {
             child: const Text("Cancel")),
         TextButton(
           onPressed: () async {
-            if (isEdit) {
-              await PlaylistController.instance.editPlayList(
-                  index!,
-                  playlist!.copyWith(
-                    name: controller.text.trim(),
-                  ));
-            } else {
-              await PlaylistController.instance.createPlayList(
-                Playlist(
-                  name: controller.text.trim(),
-                  songs: [],
-                ),
-              );
-            }
+            isEdit
+                ? await PlaylistController.instance.editPlayList(
+                    index!,
+                    playlist!.copyWith(
+                      name: controller.text.trim(),
+                    ))
+                : await PlaylistController.instance.createPlayList(
+                    Playlist(
+                      name: controller.text.trim(),
+                      songs: [],
+                    ),
+                  );
+
             controller.clear();
 
             if (context.mounted) Navigator.pop(context);

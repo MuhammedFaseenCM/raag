@@ -7,7 +7,14 @@ import 'package:raag/model/song_model.dart';
 
 class PlaySong extends StatefulWidget {
   final Song song;
-  const PlaySong({super.key, required this.song});
+  final List<Song> songList;
+  final int index;
+  const PlaySong({
+    super.key,
+    required this.song,
+    required this.songList,
+    required this.index,
+  });
 
   @override
   State<PlaySong> createState() => _PlaySongState();

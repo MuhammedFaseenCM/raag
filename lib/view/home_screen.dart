@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:raag/components/colors.dart';
-import 'package:raag/components/listanable_build.dart';
+import 'package:raag/components/listenable_build.dart';
 import 'package:raag/components/query_art_work_widget.dart';
 import 'package:raag/controllers/recently_played_controller.dart';
+import 'package:raag/controllers/songs_controller.dart';
 import 'package:raag/model/song_model.dart';
 import 'package:raag/view/song_play_screen.dart';
 
@@ -58,6 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(
                         builder: (context) => PlaySong(
                           song: widget.shuffleSong!,
+                          index: 0,
+                          songList:songsNotifier.value,
                         ),
                       ),
                     );

@@ -42,7 +42,11 @@ class ListenableWidget extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PlaySong(song: song),
+                  builder: (context) => PlaySong(
+                    song: song,
+                    index: index,
+                    songList: isSearching ? searchedSongs ?? [] : songs,
+                  ),
                 ),
               ),
               leading: QueryArtWork(songId: song.id),
@@ -51,8 +55,9 @@ class ListenableWidget extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppStyle.headline4.copyWith(
-                  color:
-                      valueListenable == recentlyPlayed ? AppColors.whiteColor : null,
+                  color: valueListenable == recentlyPlayed
+                      ? AppColors.whiteColor
+                      : null,
                 ),
               ),
               subtitle: Text(
@@ -60,8 +65,9 @@ class ListenableWidget extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppStyle.bodyText1.copyWith(
-                  color:
-                      valueListenable == recentlyPlayed ? AppColors.whiteColor : null,
+                  color: valueListenable == recentlyPlayed
+                      ? AppColors.whiteColor
+                      : null,
                 ),
               ),
               trailing: PopUp(
