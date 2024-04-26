@@ -19,19 +19,22 @@ class PlayController {
     }
     await player.stop();
     currentSong = song;
-    return await player.setFilePath(song.path);
+    Duration? duration = await player.setFilePath(song.path);
+    playSong();
+    return duration;
   }
 
   bool isSameSong(String path) {
     return currentSong?.path == path;
   }
 
-  void playSong() {
+  void playSong([void setState]) {
     isPlaying = !isPlaying;
-    if (player.playing) {
-      player.pause();
-    } else {
+    if (!player.playing) {
       player.play();
+    } else {
+      player.pause();
     }
+    setState;
   }
 }

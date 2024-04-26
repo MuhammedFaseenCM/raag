@@ -33,14 +33,15 @@ class _PlaySongState extends State<PlaySong> {
   void initState() {
     currentSongIndex = widget.index;
     _currentSong = widget.song;
-    playSong();
+    playSong(true);
     super.initState();
   }
 
-  Future<void> playSong([bool isInit =false]) async {
-    isInit? _currentSong = widget.song: _currentSong = widget.songList[currentSongIndex];
+  Future<void> playSong([bool isInit = false]) async {
+    isInit
+        ? _currentSong = widget.song
+        : _currentSong = widget.songList[currentSongIndex];
     duration = await player.initSong(currentSong);
-    if (!player.isSameSong(currentSong.path)) player.playSong();
     await RecentlyPlayed.instance.addToRecentlyPlayed(currentSong);
     setState(() {});
   }
@@ -141,9 +142,22 @@ class _PlaySongState extends State<PlaySong> {
       artworkWidth: 320,
       id: currentSong.id,
       type: ArtworkType.AUDIO,
+      artworkBorder: BorderRadius.circular(16.0),
       quality: 100,
-      artworkFit: BoxFit.fitHeight,
-      nullArtworkWidget: Image.asset("asset/images/default_album.jpg"),
+      artworkFit: BoxFit.cover,
+      nullArtworkWidget: Container(
+        height: 250,
+        width: 320,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
+          image: const DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage(
+              "asset/images/default_album.jpg",
+            ),
+          ),
+        ),
+      ),
     ));
   }
 
@@ -199,7 +213,7 @@ class _PlaySongState extends State<PlaySong> {
         IconButton(
             color: AppColors.whiteColor,
             iconSize: 55,
-            onPressed: player.playSong,
+            onPressed: () => player.playSong(setState(() {})),
             icon: Icon(
               player.player.playing
                   ? Icons.pause_circle_filled

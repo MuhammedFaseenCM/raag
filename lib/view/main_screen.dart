@@ -45,8 +45,11 @@ class _MainScreenState extends State<MainScreen> {
             child: IndexedStack(
               index: currentIndex,
               children: [
-                HomeScreen(shuffleSong: shuffleSong),
-                SearchScreen(hasPermission: hasPermission),
+               HomeScreen(shuffleSong: shuffleSong,hasPermission: hasPermission,),
+                SearchScreen(
+                  hasPermission: hasPermission,
+                  permission: () => fetchSongs(retry: true),
+                ),
                 const FavoriteScreen(),
                 const PlayListScreen()
               ],
@@ -70,24 +73,26 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   List<Song> changeSongModel(List<SongModel> songModel) {
-    List<Song> songs = [];
-    for (var song in songModel) {
-      songs.add(
-        Song(
-          id: song.id,
-          title: song.title,
-          album: song.album!,
-          path: song.data,
-        ),
-      );
-    }
-    return songs;
+    return songModel
+        .map(
+          (song) => Song(
+            id: song.id,
+            title: song.title,
+            album: song.album!,
+            path: song.data,
+          ),
+        )
+        .toList();
   }
 
   Future<void> fetchSongs({bool retry = false}) async {
-    hasPermission = await audioQuery.checkAndRequest(
-      retryRequest: retry,
-    );
+    try {
+      hasPermission = await audioQuery.checkAndRequest(
+        retryRequest: retry,
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
     if (hasPermission) {
       List<SongModel> songModel = await audioQuery.querySongs(
         sortType: null,
@@ -108,9 +113,9 @@ class _MainScreenState extends State<MainScreen> {
       shuffleSong = songsNotifier.value[randomIndex];
     }
 
-    hasPermission ? setState(() {}) : null;
+    if (hasPermission) setState(() {});
   }
-  
+
   @override
   void dispose() {
     PlayController.instance.player.dispose();

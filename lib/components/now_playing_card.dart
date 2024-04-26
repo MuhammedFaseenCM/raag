@@ -3,9 +3,14 @@ import 'package:raag/components/colors.dart';
 import 'package:raag/components/theme.dart';
 import 'package:raag/controllers/play_controller.dart';
 
-class NowPlayingCard extends StatelessWidget {
+class NowPlayingCard extends StatefulWidget {
   const NowPlayingCard({super.key});
 
+  @override
+  State<NowPlayingCard> createState() => _NowPlayingCardState();
+}
+
+class _NowPlayingCardState extends State<NowPlayingCard> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -31,12 +36,15 @@ class NowPlayingCard extends StatelessWidget {
               ),
             ),
             IconButton(
-              onPressed: PlayController.instance.playSong,
-              icon:  Icon(
-             PlayController.instance.isPlaying?   Icons.pause : Icons.play_arrow,
-                color: AppColors.whiteColor
-              ),
-            color: AppColors.whiteColor,
+              onPressed: () => PlayController.instance.playSong(setState(
+                () {},
+              )),
+              icon: Icon(
+                  PlayController.instance.isPlaying
+                      ? Icons.pause
+                      : Icons.play_arrow,
+                  color: AppColors.whiteColor),
+              color: AppColors.whiteColor,
             ),
           ],
         ),

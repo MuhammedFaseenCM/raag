@@ -8,7 +8,8 @@ import 'package:raag/model/song_model.dart';
 
 class SearchScreen extends StatefulWidget {
   final bool hasPermission;
-  const SearchScreen({super.key, required this.hasPermission});
+  final void Function() permission;
+  const SearchScreen({super.key, required this.hasPermission,required this.permission,});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -68,8 +69,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   searchController: searchController,
                 )
               else
-                const Center(
-                  child: Text('Error fetching songs'),
+                Center(
+                  child: ElevatedButton(
+                      onPressed: widget.permission, child: const Text("Add permission"),
+                      ),
                 ),
             ],
           ),
@@ -107,18 +110,5 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
     );
     return textFormField;
-  }
-
-  List<Song> changeSongModel(List<SongModel> songModel) {
-    return songModel
-        .map(
-          (song) => Song(
-            id: song.id,
-            title: song.title,
-            album: song.album!,
-            path: song.data,
-          ),
-        )
-        .toList();
   }
 }
