@@ -10,10 +10,12 @@ import 'package:raag/view/song_play_screen.dart';
 class HomeScreen extends StatefulWidget {
   final Song? shuffleSong;
   final bool hasPermission;
+  final void Function() onPlaylistTap;
   const HomeScreen({
     super.key,
     this.shuffleSong,
     required this.hasPermission,
+    required this.onPlaylistTap,
   });
 
   @override
@@ -30,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.sizeOf(context).width,
+      height: MediaQuery.sizeOf(context).height,
       decoration: const BoxDecoration(
         gradient: AppColors.primaryGradient,
       ),
@@ -100,10 +103,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   image: AssetImage(
                                       'asset/images/sita_ramam.jpg'))),
                         ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.blue[700],
-                          size: 120,
+                        InkWell(
+                          onTap: widget.onPlaylistTap,
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.blue[700],
+                            size: 120,
+                          ),
                         )
                       ],
                     ),
@@ -148,6 +154,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     ListenableWidget(valueListenable: recentlyPlayed),
+                    const SizedBox(
+                      height: 25,
+                    )
                   ],
                 ),
               ),

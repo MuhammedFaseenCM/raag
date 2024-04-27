@@ -13,11 +13,18 @@ class SongsController extends ChangeNotifier {
 
   SongsController._internal();
 
+  final box = Hive.box<Song>('songs');
+  Future<void> addSongsToNotifier() async {
+    songsNotifier.value =
+        box.values.take(songsNotifier.value.length + 10).toList();
+
+    print("song length ${songsNotifier.value.length}");
+    songsNotifier.notifyListeners();
+  }
+
   Future<void> addSongsToHive(List<Song> songs) async {
-    final box = Hive.box<Song>('songs');
     await box.clear();
     await box.addAll(songs); //storing to hive
-    songsNotifier.value = box.values.toList(); //getting from hive
-    songsNotifier.notifyListeners();
+    addSongsToNotifier();
   }
 }

@@ -30,7 +30,7 @@ class PlaylistBottomSheet extends StatelessWidget {
                       title: Text(playlist.name),
                       onTap: () {
                         PlaylistController.instance
-                            .addSongToPlayList(index, song);
+                            .addSongToPlayList(index, song, context);
                         Navigator.pop(context);
                       },
                       leading: const Icon(Icons.playlist_add),

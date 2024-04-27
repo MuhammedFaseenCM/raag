@@ -45,7 +45,11 @@ class _MainScreenState extends State<MainScreen> {
             child: IndexedStack(
               index: currentIndex,
               children: [
-               HomeScreen(shuffleSong: shuffleSong,hasPermission: hasPermission,),
+                HomeScreen(
+                  shuffleSong: shuffleSong,
+                  hasPermission: hasPermission,
+                  onPlaylistTap: () => onTap(3),
+                ),
                 SearchScreen(
                   hasPermission: hasPermission,
                   permission: () => fetchSongs(retry: true),
@@ -55,8 +59,7 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-          if (PlayController.instance.currentSong != null)
-            const NowPlayingCard(),
+          const NowPlayingCard(),
         ],
       ),
       bottomNavigationBar: BottomNavBar(

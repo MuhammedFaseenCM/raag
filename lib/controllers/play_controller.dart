@@ -37,4 +37,10 @@ class PlayController {
     }
     setState;
   }
+
+  Future<void> stopSong(void setState)async{
+    await player.stop();
+    currentSong = null;
+    setState;
+  }
 }

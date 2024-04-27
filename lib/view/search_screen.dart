@@ -9,7 +9,11 @@ import 'package:raag/model/song_model.dart';
 class SearchScreen extends StatefulWidget {
   final bool hasPermission;
   final void Function() permission;
-  const SearchScreen({super.key, required this.hasPermission,required this.permission,});
+  const SearchScreen({
+    super.key,
+    required this.hasPermission,
+    required this.permission,
+  });
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -20,12 +24,26 @@ class _SearchScreenState extends State<SearchScreen> {
   bool hasPermission = false;
   List<Song> searchedSongs = [];
   TextEditingController searchController = TextEditingController();
+  ScrollController scrollController = ScrollController();
   final debouncer = Debouncer(milliseconds: 300);
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     audioQuery = OnAudioQuery();
+    scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() async {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      isLoading = true;
+      
+      await SongsController.instance.addSongsToNotifier();
+      isLoading = false;
+      setState(() {});
+    }
   }
 
   @override
@@ -39,6 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
         }
       },
       child: SingleChildScrollView(
+        controller: scrollController,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -71,9 +90,15 @@ class _SearchScreenState extends State<SearchScreen> {
               else
                 Center(
                   child: ElevatedButton(
-                      onPressed: widget.permission, child: const Text("Add permission"),
-                      ),
+                    onPressed: widget.permission,
+                    child: const Text("Add permission"),
+                  ),
                 ),
+              if (isLoading)
+                const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Center(child: CircularProgressIndicator()),
+                )
             ],
           ),
         ),
