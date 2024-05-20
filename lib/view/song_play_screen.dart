@@ -72,7 +72,6 @@ class _PlaySongState extends State<PlaySong> {
         : _currentSong = widget.songList[currentSongIndex];
     duration = await player.initSong(currentSong);
     await RecentlyPlayed.instance.addToRecentlyPlayed(currentSong);
-    await player.player.setLoopMode(LoopMode.all);
     setState(() {});
   }
 
