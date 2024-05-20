@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:raag/components/colors.dart';
 import 'package:raag/controllers/play_controller.dart';
@@ -28,12 +29,40 @@ class _PlaySongState extends State<PlaySong> {
   Song get currentSong => _currentSong!;
 
   Song? _currentSong;
+  ConcatenatingAudioSource? playList;
 
   @override
   void initState() {
     currentSongIndex = widget.index;
     _currentSong = widget.song;
-    playSong(true);
+    // playSong(true);
+    playList = ConcatenatingAudioSource(
+      children: List.generate(
+        widget.songList.length,
+        (index) => AudioSource.file(
+          widget.songList[index].path,
+        ),
+      ),
+    );
+    player.player.setAudioSource(
+      playList!,
+      initialIndex:
+          widget.songList.indexWhere((song) => song.path == widget.song.path),
+    );
+    player.player.play();
+    player.player.setLoopMode(LoopMode.all);
+    player.player.currentIndexStream.listen((index) {
+      if (index != null && currentSongIndex != index) {
+        // Handle the song change
+        setState(() {
+          currentSongIndex = index;
+          _currentSong =
+              widget.songList[(currentSongIndex) % widget.songList.length];
+        });
+        print("Current song changed to: ${currentSong.title}");
+        // Update your UI or perform other actions here
+      }
+    });
     super.initState();
   }
 
@@ -43,6 +72,7 @@ class _PlaySongState extends State<PlaySong> {
         : _currentSong = widget.songList[currentSongIndex];
     duration = await player.initSong(currentSong);
     await RecentlyPlayed.instance.addToRecentlyPlayed(currentSong);
+    await player.player.setLoopMode(LoopMode.all);
     setState(() {});
   }
 
